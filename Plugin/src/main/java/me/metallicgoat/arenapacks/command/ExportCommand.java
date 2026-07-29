@@ -1,4 +1,4 @@
-package me.metallicgoat.arenapack.command;
+package me.metallicgoat.arenapacks.command;
 
 import de.marcely.bedwars.api.GameAPI;
 import de.marcely.bedwars.api.arena.Arena;
@@ -6,8 +6,8 @@ import de.marcely.bedwars.api.command.CommandHandler;
 import de.marcely.bedwars.api.command.SubCommand;
 import java.util.ArrayList;
 import java.util.List;
-import me.metallicgoat.arenapack.ArenaPackPlugin;
-import me.metallicgoat.arenapack.pack.PackExporter;
+import me.metallicgoat.arenapacks.ArenaPacksPlugin;
+import me.metallicgoat.arenapacks.pack.PackExporter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -16,14 +16,14 @@ public class ExportCommand implements CommandHandler {
 
   @Override
   public Plugin getPlugin() {
-    return ArenaPackPlugin.getInstance();
+    return ArenaPacksPlugin.getInstance();
   }
 
   @Override
   public void onRegister(SubCommand command) {
     command.setOnlyForPlayers(false);
     command.setUsage("<arena> [packVersion]");
-    command.setPermission("mbedwars.arenapack.export");
+    command.setPermission("mbedwars.arenapacks.export");
   }
 
   @Override

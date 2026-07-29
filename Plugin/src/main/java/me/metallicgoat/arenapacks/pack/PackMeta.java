@@ -1,4 +1,4 @@
-package me.metallicgoat.arenapack.pack;
+package me.metallicgoat.arenapacks.pack;
 
 import de.marcely.bedwars.tools.location.XYZ;
 import de.marcely.bedwars.tools.location.XYZD;
@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Everything stored in a pack's arena.yml. Plain data carrier — no Bukkit or
+ * Everything stored in a pack's arena.json. Plain data carrier — no Bukkit or
  * MBedwars lookups happen here, so instances may travel between threads.
  */
 public class PackMeta {
@@ -24,11 +23,10 @@ public class PackMeta {
   public String packName;
   public int packVersion = 1;
   public String exporterVersion;
-  public int mbedwarsApiVersion;
-  public String minecraftVersion;
   public String exportedAt;
-
-  // world
+  public String minecraftVersion;
+  /** API version the pack was exported on; installing needs at least this. */
+  public int mbedwarsApiVersion;
   public String originalWorldName;
 
   // arena
@@ -41,7 +39,6 @@ public class PackMeta {
   public String weatherType;
   public String timeType;
   public List<String> authors = new ArrayList<>();
-  public @Nullable ItemStack icon;
   public XYZ regionMin;
   public XYZ regionMax;
   public @Nullable XYZYP spectatorSpawn;
@@ -49,26 +46,10 @@ public class PackMeta {
   public Map<String, TeamData> teams = new LinkedHashMap<>();
   public List<SpawnerData> spawners = new ArrayList<>();
   public List<HologramData> holograms = new ArrayList<>();
-  public @Nullable String persistentStorageDump;
 
   public static class TeamData {
     public @Nullable XYZYP spawn;
     public @Nullable XYZD bed;
-    public List<EffectData> baseOnlyEffects = new ArrayList<>();
-    public List<EffectData> permanentEffects = new ArrayList<>();
-  }
-
-  public static class EffectData {
-    public String type;
-    public int amplifier;
-
-    public EffectData() {
-    }
-
-    public EffectData(String type, int amplifier) {
-      this.type = type;
-      this.amplifier = amplifier;
-    }
   }
 
   public static class SpawnerData {

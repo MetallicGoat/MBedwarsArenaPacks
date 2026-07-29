@@ -1,4 +1,4 @@
-package me.metallicgoat.arenapack.pack;
+package me.metallicgoat.arenapacks.pack;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

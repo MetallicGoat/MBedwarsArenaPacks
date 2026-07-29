@@ -1,4 +1,4 @@
-package me.metallicgoat.arenapack.pack;
+package me.metallicgoat.arenapacks.pack;
 
 import de.marcely.bedwars.api.BedwarsAPI;
 import de.marcely.bedwars.api.GameAPI;
@@ -12,27 +12,27 @@ import de.marcely.bedwars.tools.location.XYZ;
 import de.marcely.bedwars.tools.location.XYZD;
 import de.marcely.bedwars.tools.location.XYZYP;
 import java.io.File;
-import java.io.StringWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import me.metallicgoat.arenapack.ArenaPackPlugin;
-import me.metallicgoat.arenapack.config.MainConfig;
-import me.metallicgoat.arenapack.util.Console;
-import me.metallicgoat.arenapack.util.WorldFiles;
-import me.metallicgoat.arenapack.util.ZipUtil;
+import me.metallicgoat.arenapacks.ArenaPacksPlugin;
+import me.metallicgoat.arenapacks.config.MainConfig;
+import me.metallicgoat.arenapacks.util.Console;
+import me.metallicgoat.arenapacks.util.WorldFiles;
+import me.metallicgoat.arenapacks.util.ZipUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.potion.PotionEffect;
 
 public class PackExporter {
 
   /**
-   * Exports an arena to exports/&lt;name&gt;.zip. Must be called on the main
-   * thread; file IO runs async and the outcome is reported to {@code sender}.
+   * Exports an arena to exports/&lt;name&gt;/, holding world.zip next to a
+   * hand-editable arena.json. Must be called on the main thread; file IO runs
+   * async and the outcome is reported to {@code sender}.
    */
   public static void export(CommandSender sender, Arena arena, int packVersion) {
     if (!OperationLock.tryAcquire()) {
@@ -70,15 +70,16 @@ public class PackExporter {
         }
       }
 
-      final ArenaPackPlugin plugin = ArenaPackPlugin.getInstance();
+      final ArenaPacksPlugin plugin = ArenaPacksPlugin.getInstance();
       final PackMeta meta = capture(arena, world, packVersion);
       final File worldFolder = world.getWorldFolder();
-      final File tmpDir = new File(plugin.getTmpExportFolder(), meta.arenaName);
-      final File zipFile = new File(plugin.getExportsFolder(), sanitizeFileName(meta.arenaName) + ".zip");
+      final File packDir = new File(categoryFolder(plugin.getExportsFolder(), meta), sanitizeFileName(meta.arenaName));
+      final File zipFile = new File(packDir, PackMetaCodec.WORLD_ZIP_NAME);
+      final File metaFile = new File(packDir, PackMetaCodec.META_FILE_NAME);
 
       sender.sendMessage("§7Exporting arena '" + meta.arenaName + "'...");
 
-      // Flush the world and keep it stable while the folder is copied
+      // Flush the world and keep it stable while the folder is zipped
       world.save();
       world.setAutoSave(false);
       started = true;
@@ -87,17 +88,26 @@ public class PackExporter {
         Throwable failure = null;
 
         try {
-          WorldFiles.deleteDirectory(tmpDir);
-          WorldFiles.copyDirectory(worldFolder, new File(tmpDir, PackMetaCodec.WORLD_DIR_NAME), WorldFiles.WORLD_EXCLUDES);
-          PackMetaCodec.write(meta, new File(tmpDir, PackMetaCodec.META_FILE_NAME));
+          if (!packDir.isDirectory() && !packDir.mkdirs())
+            throw new IOException("Failed to create directory: " + packDir);
 
-          zipFile.getParentFile().mkdirs();
-          zipFile.delete();
-          ZipUtil.zip(tmpDir, zipFile);
+          // Staged next to the final file so a crash cannot leave a half-written world.zip
+          final File partFile = new File(packDir, PackMetaCodec.WORLD_ZIP_NAME + ".part");
+
+          try {
+            ZipUtil.zip(worldFolder, partFile, WorldFiles::isExcludedFromPack);
+
+            zipFile.delete();
+
+            if (!partFile.renameTo(zipFile))
+              throw new IOException("Failed to move " + partFile.getName() + " into place");
+          } finally {
+            partFile.delete();
+          }
+
+          PackMetaCodec.write(meta, metaFile);
         } catch (Throwable t) {
           failure = t;
-        } finally {
-          WorldFiles.deleteDirectory(tmpDir);
         }
 
         final Throwable finalFailure = failure;
@@ -115,8 +125,8 @@ public class PackExporter {
             finalFailure.printStackTrace();
             sender.sendMessage("§cExport failed: " + finalFailure.getMessage() + " (see console)");
           } else {
-            sender.sendMessage("§aExported arena '" + meta.arenaName + "' to " + zipFile.getPath()
-                + " (" + WorldFiles.formatSize(zipFile.length()) + ")");
+            sender.sendMessage("§aExported arena '" + meta.arenaName + "' to " + packDir.getPath()
+                + " (world.zip: " + WorldFiles.formatSize(zipFile.length()) + ")");
           }
         });
       });
@@ -128,15 +138,15 @@ public class PackExporter {
 
   /** Snapshots everything into a PackMeta. Main thread only. */
   private static PackMeta capture(Arena arena, World world, int packVersion) {
-    final ArenaPackPlugin plugin = ArenaPackPlugin.getInstance();
+    final ArenaPacksPlugin plugin = ArenaPacksPlugin.getInstance();
     final PackMeta meta = new PackMeta();
 
     meta.packName = arena.getName();
     meta.packVersion = packVersion;
-    meta.exporterVersion = "MBedwarsArenaPack " + plugin.getDescription().getVersion();
-    meta.mbedwarsApiVersion = BedwarsAPI.getAPIVersion();
-    meta.minecraftVersion = Bukkit.getBukkitVersion().split("-")[0];
+    meta.exporterVersion = "MBedwarsArenaPacks " + plugin.getDescription().getVersion();
     meta.exportedAt = utcTimestamp();
+    meta.minecraftVersion = Bukkit.getBukkitVersion().split("-")[0];
+    meta.mbedwarsApiVersion = BedwarsAPI.getAPIVersion();
 
     meta.originalWorldName = world.getName();
 
@@ -152,9 +162,6 @@ public class PackExporter {
     for (String author : arena.getAuthors())
       meta.authors.add(author);
 
-    final org.bukkit.inventory.ItemStack icon = arena.getIcon();
-
-    meta.icon = icon != null ? icon.clone() : null;
     meta.regionMin = new XYZ(arena.getMinRegionCorner());
     meta.regionMax = new XYZ(arena.getMaxRegionCorner());
 
@@ -169,12 +176,6 @@ public class PackExporter {
 
       data.spawn = spawn != null ? new XYZYP(spawn) : null;
       data.bed = bed != null ? new XYZD(bed) : null;
-
-      for (PotionEffect effect : arena.getTeamBaseOnlyEffects(team))
-        data.baseOnlyEffects.add(new PackMeta.EffectData(effect.getType().getName(), effect.getAmplifier()));
-
-      for (PotionEffect effect : arena.getTeamPermanentEffects(team))
-        data.permanentEffects.add(new PackMeta.EffectData(effect.getType().getName(), effect.getAmplifier()));
 
       meta.teams.put(team.name(), data);
     }
@@ -194,15 +195,6 @@ public class PackExporter {
       meta.holograms.add(new PackMeta.HologramData(hologram.getControllerType().name(), new XYZYP(location)));
     }
 
-    try {
-      final StringWriter writer = new StringWriter();
-
-      arena.getPersistentStorage().serialize(writer);
-      meta.persistentStorageDump = writer.toString();
-    } catch (Exception e) {
-      Console.printWarn("Failed to serialize the arena's persistent storage; the pack will not include it: " + e);
-    }
-
     return meta;
   }
 
@@ -218,6 +210,18 @@ public class PackExporter {
     return location.getX() >= minX && location.getX() <= maxX + 1
         && location.getY() >= minY && location.getY() <= maxY + 1
         && location.getZ() >= minZ && location.getZ() <= maxZ + 1;
+  }
+
+  /**
+   * Groups exports by team count ({@code exports/4-Teams/Amazonia}) so an
+   * exported folder can be dropped into a pack repo as-is. Hyphenated to keep
+   * the path URL-safe once it is published.
+   */
+  private static File categoryFolder(File exportsFolder, PackMeta meta) {
+    if (meta.teams.isEmpty())
+      return exportsFolder;
+
+    return new File(exportsFolder, meta.teams.size() + "-Teams");
   }
 
   public static String sanitizeFileName(String name) {

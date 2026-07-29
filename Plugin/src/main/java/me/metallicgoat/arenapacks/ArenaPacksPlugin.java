@@ -1,26 +1,25 @@
-package me.metallicgoat.arenapack;
+package me.metallicgoat.arenapacks;
 
 import de.marcely.bedwars.api.BedwarsAPI;
 import java.io.File;
-import me.metallicgoat.arenapack.config.MainConfig;
-import me.metallicgoat.arenapack.util.Console;
-import me.metallicgoat.arenapack.util.WorldFiles;
+import me.metallicgoat.arenapacks.config.MainConfig;
+import me.metallicgoat.arenapacks.util.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class ArenaPackPlugin extends JavaPlugin {
+public class ArenaPacksPlugin extends JavaPlugin {
 
   public static final int MIN_MBEDWARS_API_VER = 208;
   public static final String MIN_MBEDWARS_VER_NAME = "5.5.8";
 
-  private static ArenaPackPlugin instance;
-  private static ArenaPackAddon addon;
+  private static ArenaPacksPlugin instance;
+  private static ArenaPacksAddon addon;
 
-  public static ArenaPackPlugin getInstance() {
+  public static ArenaPacksPlugin getInstance() {
     return instance;
   }
 
-  public static ArenaPackAddon getAddon() {
+  public static ArenaPacksAddon getAddon() {
     return addon;
   }
 
@@ -41,17 +40,13 @@ public class ArenaPackPlugin extends JavaPlugin {
     // MBedwars builds its command tree while enabling; register ours once it is ready
     BedwarsAPI.onReady(() -> addon.registerCommands());
 
-    Console.printInfo("MBedwarsArenaPack v" + getDescription().getVersion() + " enabled");
+    Console.printInfo("MBedwarsArenaPacks v" + getDescription().getVersion() + " enabled");
   }
 
   private void setupDataFolders() {
     getExportsFolder().mkdirs();
     getImportsFolder().mkdirs();
     getDownloadsFolder().mkdirs();
-
-    // Leftovers from operations interrupted by a shutdown
-    WorldFiles.deleteDirectory(getTmpExportFolder());
-    WorldFiles.deleteDirectory(getTmpImportFolder());
   }
 
   public File getExportsFolder() {
@@ -64,14 +59,6 @@ public class ArenaPackPlugin extends JavaPlugin {
 
   public File getDownloadsFolder() {
     return new File(getDataFolder(), "cache/downloads");
-  }
-
-  public File getTmpExportFolder() {
-    return new File(getDataFolder(), "cache/tmp-export");
-  }
-
-  public File getTmpImportFolder() {
-    return new File(getDataFolder(), "cache/tmp-import");
   }
 
   private boolean checkMBedwars() {
@@ -92,7 +79,7 @@ public class ArenaPackPlugin extends JavaPlugin {
   }
 
   private boolean registerAddon() {
-    addon = new ArenaPackAddon(this);
+    addon = new ArenaPacksAddon(this);
 
     if (!addon.register()) {
       getLogger().warning("It seems like this addon has already been loaded. Please delete duplicates and try again.");

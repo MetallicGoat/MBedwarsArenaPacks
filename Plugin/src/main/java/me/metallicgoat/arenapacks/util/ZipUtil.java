@@ -1,4 +1,4 @@
-package me.metallicgoat.arenapack.util;
+package me.metallicgoat.arenapacks.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,36 +6,70 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import org.jetbrains.annotations.Nullable;
 
 public class ZipUtil {
 
   /**
-   * Zips the contents of {@code sourceDir} (not the folder itself) into
-   * {@code zipFile}.
+   * Fixed timestamp written on every entry. Zipping an unchanged folder twice
+   * must produce byte-identical output, otherwise every export would show up as
+   * a change in git even when the map never moved.
    */
-  public static void zip(File sourceDir, File zipFile) throws IOException {
+  private static final long FIXED_ENTRY_TIME = 0L;
+
+  private static final Comparator<File> BY_NAME = new Comparator<File>() {
+    @Override
+    public int compare(File a, File b) {
+      return a.getName().compareTo(b.getName());
+    }
+  };
+
+  /**
+   * Zips the contents of {@code sourceDir} (not the folder itself) into
+   * {@code zipFile}. Entries accepted by {@code excludedRootEntries} are
+   * skipped at the top level only.
+   */
+  public static void zip(File sourceDir, File zipFile, @Nullable Predicate<String> excludedRootEntries) throws IOException {
     try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
-      zipEntry(sourceDir, "", out);
+      zipEntry(sourceDir, "", out, excludedRootEntries);
     }
   }
 
-  private static void zipEntry(File file, String path, ZipOutputStream out) throws IOException {
+  public static void zip(File sourceDir, File zipFile) throws IOException {
+    zip(sourceDir, zipFile, null);
+  }
+
+  private static void zipEntry(File file, String path, ZipOutputStream out,
+                               @Nullable Predicate<String> excludedRootEntries) throws IOException {
     if (file.isDirectory()) {
       final File[] entries = file.listFiles();
 
       if (entries == null)
         throw new IOException("Failed to list directory: " + file);
 
-      for (File entry : entries)
-        zipEntry(entry, path.isEmpty() ? entry.getName() : path + "/" + entry.getName(), out);
+      // Filesystem order is not guaranteed; sort so the output stays stable
+      Arrays.sort(entries, BY_NAME);
+
+      for (File entry : entries) {
+        if (excludedRootEntries != null && excludedRootEntries.test(entry.getName()))
+          continue;
+
+        zipEntry(entry, path.isEmpty() ? entry.getName() : path + "/" + entry.getName(), out, null);
+      }
 
       return;
     }
 
-    out.putNextEntry(new ZipEntry(path));
+    final ZipEntry entry = new ZipEntry(path);
+
+    entry.setTime(FIXED_ENTRY_TIME);
+    out.putNextEntry(entry);
 
     try (InputStream in = new FileInputStream(file)) {
       copy(in, out);

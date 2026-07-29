@@ -1,19 +1,19 @@
-package me.metallicgoat.arenapack.config;
+package me.metallicgoat.arenapacks.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
 public class MainConfig {
 
-  public static String repo_slug = "MetallicGoat/mbedwars-arena-packs";
+  public static String repo_slug = "MetallicGoat/MBedwarsArenaPacks";
   public static String repo_branch = "main";
-  public static String repo_index_path = "index.json";
+  public static String repo_index_path = "Packs/index.json";
 
   public static int connect_timeout_ms = 10000;
   public static int read_timeout_ms = 30000;
   public static int index_cache_seconds = 300;
 
-  public static String world_name_format = "arenapack_{arena}";
+  public static String world_name_format = "arenapacks_{arena}";
   public static boolean only_holograms_inside_region = true;
 
   public static void load(Plugin plugin) {

@@ -1,20 +1,20 @@
-package me.metallicgoat.arenapack;
+package me.metallicgoat.arenapacks;
 
 import de.marcely.bedwars.api.BedwarsAPI;
 import de.marcely.bedwars.api.BedwarsAddon;
 import de.marcely.bedwars.api.command.CommandHandler;
 import de.marcely.bedwars.api.command.CommandsCollection;
-import me.metallicgoat.arenapack.command.ExportCommand;
-import me.metallicgoat.arenapack.command.ImportCommand;
-import me.metallicgoat.arenapack.command.InstallCommand;
-import me.metallicgoat.arenapack.command.ListCommand;
-import me.metallicgoat.arenapack.util.Console;
+import me.metallicgoat.arenapacks.command.ExportCommand;
+import me.metallicgoat.arenapacks.command.ImportCommand;
+import me.metallicgoat.arenapacks.command.InstallCommand;
+import me.metallicgoat.arenapacks.command.ListCommand;
+import me.metallicgoat.arenapacks.util.Console;
 
-public class ArenaPackAddon extends BedwarsAddon {
+public class ArenaPacksAddon extends BedwarsAddon {
 
-  private final ArenaPackPlugin plugin;
+  private final ArenaPacksPlugin plugin;
 
-  public ArenaPackAddon(ArenaPackPlugin plugin) {
+  public ArenaPacksAddon(ArenaPacksPlugin plugin) {
     super(plugin);
 
     this.plugin = plugin;
@@ -27,14 +27,14 @@ public class ArenaPackAddon extends BedwarsAddon {
 
   public void registerCommands() {
     final CommandsCollection root = BedwarsAPI.getRootCommandsCollection();
-    final CommandsCollection collection = root.addCommandsCollection("arenapack");
+    final CommandsCollection collection = root.addCommandsCollection("arenapacks");
 
     if (collection == null) {
-      Console.printWarn("Failed to register '/bw arenapack' commands. Does another plugin already use that name?");
+      Console.printWarn("Failed to register '/bw arenapacks' commands. Does another plugin already use that name?");
       return;
     }
 
-    collection.setPermission("mbedwars.arenapack");
+    collection.setPermission("mbedwars.arenapacks");
 
     registerCommand("export", collection, new ExportCommand());
     registerCommand("import", collection, new ImportCommand());

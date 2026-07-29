@@ -1,4 +1,4 @@
-package me.metallicgoat.arenapack.pack;
+package me.metallicgoat.arenapacks.pack;
 
 import de.marcely.bedwars.api.BedwarsAPI;
 import de.marcely.bedwars.api.GameAPI;
@@ -14,58 +14,55 @@ import de.marcely.bedwars.api.world.WorldStorage;
 import de.marcely.bedwars.api.world.hologram.HologramControllerType;
 import de.marcely.bedwars.api.world.hologram.HologramEntity;
 import java.io.File;
-import java.io.StringReader;
 import java.util.Map;
-import java.util.UUID;
-import me.metallicgoat.arenapack.ArenaPackPlugin;
-import me.metallicgoat.arenapack.config.MainConfig;
-import me.metallicgoat.arenapack.util.Console;
-import me.metallicgoat.arenapack.util.WorldFiles;
-import me.metallicgoat.arenapack.util.ZipUtil;
+import me.metallicgoat.arenapacks.ArenaPacksPlugin;
+import me.metallicgoat.arenapacks.config.MainConfig;
+import me.metallicgoat.arenapacks.util.Console;
+import me.metallicgoat.arenapacks.util.WorldFiles;
+import me.metallicgoat.arenapacks.util.ZipUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.CommandSender;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 public class PackImporter {
 
   /**
-   * Imports a pack zip: unpacks it, installs the world under a new name,
-   * creates the arena and applies all metadata. Call from the main thread;
-   * heavy IO runs async and the outcome is reported to {@code sender}.
+   * Imports a pack folder (arena.json + world.zip): unpacks the world under a
+   * new name, creates the arena and applies all metadata. Call from the main
+   * thread; heavy IO runs async and the outcome is reported to {@code sender}.
+   * <p>
+   * The pack folder itself is only ever read, never modified.
    */
-  public static void importPack(CommandSender sender, File zipFile, @Nullable String overrideName) {
+  public static void importPack(CommandSender sender, File packDir, @Nullable String overrideName) {
     if (!OperationLock.tryAcquire()) {
       sender.sendMessage("§cAnother arena pack operation is already running. Try again in a moment.");
       return;
     }
 
-    if (!zipFile.isFile()) {
+    if (!packDir.isDirectory()) {
       OperationLock.release();
-      sender.sendMessage("§cFile not found: " + zipFile.getPath());
+      sender.sendMessage("§cPack folder not found: " + packDir.getPath());
       return;
     }
 
-    final ArenaPackPlugin plugin = ArenaPackPlugin.getInstance();
-    final File tmpDir = new File(plugin.getTmpImportFolder(), UUID.randomUUID().toString());
+    final ArenaPacksPlugin plugin = ArenaPacksPlugin.getInstance();
+    final File worldZip = new File(packDir, PackMetaCodec.WORLD_ZIP_NAME);
 
-    sender.sendMessage("§7Unpacking " + zipFile.getName() + "...");
+    sender.sendMessage("§7Reading " + packDir.getName() + "/" + PackMetaCodec.META_FILE_NAME + "...");
 
-    // Step 1 (async): unzip + read metadata
+    // Step 1 (async): read the metadata
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
       final PackMeta meta;
 
       try {
-        ZipUtil.unzip(zipFile, tmpDir);
+        meta = PackMetaCodec.read(new File(packDir, PackMetaCodec.META_FILE_NAME));
 
-        meta = PackMetaCodec.read(new File(tmpDir, PackMetaCodec.META_FILE_NAME));
-
-        if (!new File(tmpDir, PackMetaCodec.WORLD_DIR_NAME).isDirectory())
-          throw new IllegalStateException("Pack contains no '" + PackMetaCodec.WORLD_DIR_NAME + "' folder");
+        if (!worldZip.isFile())
+          throw new InvalidPackException("Pack is missing its " + PackMetaCodec.WORLD_ZIP_NAME);
       } catch (Exception e) {
-        fail(sender, tmpDir, "Invalid pack: " + e.getMessage(), e);
+        fail(sender, "Invalid pack: " + e.getMessage(), e);
         return;
       }
 
@@ -74,13 +71,13 @@ public class PackImporter {
         final String arenaName = overrideName != null ? overrideName : meta.arenaName;
 
         if (!GameAPI.get().isArenaNameValid(arenaName)) {
-          fail(sender, tmpDir, "'" + arenaName + "' is not a valid arena name.", null);
+          fail(sender, "'" + arenaName + "' is not a valid arena name.", null);
           return;
         }
 
         if (GameAPI.get().getArenaByExactName(arenaName) != null) {
-          fail(sender, tmpDir, "An arena named '" + arenaName + "' already exists."
-              + " Import under a different name: /bw arenapack import " + zipFile.getName() + " <newName>", null);
+          fail(sender, "An arena named '" + arenaName + "' already exists."
+              + " Import under a different name: /bw arenapacks import " + packDir.getName() + " <newName>", null);
           return;
         }
 
@@ -88,37 +85,36 @@ public class PackImporter {
         final File worldTarget = new File(Bukkit.getWorldContainer(), worldName);
 
         if (Bukkit.getWorld(worldName) != null || worldTarget.exists()) {
-          fail(sender, tmpDir, "World '" + worldName + "' already exists. Remove it or import under a different arena name.", null);
+          fail(sender, "World '" + worldName + "' already exists. Remove it or import under a different arena name.", null);
           return;
         }
 
         sender.sendMessage("§7Installing world '" + worldName + "'...");
 
-        // Step 3 (async): move the world folder into the server's world container
+        // Step 3 (async): unpack the world straight into the server's world container
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
           try {
-            WorldFiles.moveDirectory(new File(tmpDir, PackMetaCodec.WORLD_DIR_NAME), worldTarget);
+            ZipUtil.unzip(worldZip, worldTarget);
 
             // Defensive: ensure a fresh world identity on this server
             new File(worldTarget, "uid.dat").delete();
             new File(worldTarget, "session.lock").delete();
           } catch (Exception e) {
             WorldFiles.deleteDirectory(worldTarget);
-            fail(sender, tmpDir, "Failed to install the world folder: " + e.getMessage(), e);
+            fail(sender, "Failed to install the world folder: " + e.getMessage(), e);
             return;
           }
 
           // Step 4 (sync): load world, build arena, apply metadata
           Bukkit.getScheduler().runTask(plugin, () ->
-              buildArena(sender, meta, arenaName, worldName, worldTarget, tmpDir));
+              buildArena(sender, meta, arenaName, worldName, worldTarget));
         });
       });
     });
   }
 
   private static void buildArena(CommandSender sender, PackMeta meta, String arenaName,
-                                 String worldName, File worldTarget, File tmpDir) {
-    final ArenaPackPlugin plugin = ArenaPackPlugin.getInstance();
+                                 String worldName, File worldTarget) {
     World world = null;
 
     try {
@@ -163,10 +159,9 @@ public class PackImporter {
       arena.saveNow();
 
       OperationLock.release();
-      WorldFiles.deleteDirectoryAsync(tmpDir);
 
       sender.sendMessage("§aImported arena '" + arenaName + "' (world: " + worldName + ").");
-      sender.sendMessage("§eThe lobby location is not part of packs - set one with the MBedwars setup GUI or '/bw arena set lobby " + arenaName + "' before enabling the arena.");
+      sender.sendMessage("§eThe lobby location and arena icon are not part of packs - set them with the MBedwars setup GUI before enabling the arena.");
     } catch (Exception e) {
       // Fatal failure: undo the world install so the import leaves no traces
       if (world != null)
@@ -179,7 +174,7 @@ public class PackImporter {
       if (halfBuilt != null)
         halfBuilt.remove();
 
-      fail(sender, tmpDir, "Import failed: " + e.getMessage(), e);
+      fail(sender, "Import failed: " + e.getMessage(), e);
     }
   }
 
@@ -196,14 +191,6 @@ public class PackImporter {
     if (meta.customName != null && !meta.customName.isEmpty()) {
       arena.setCustomName(meta.customName);
       arena.setCustomNameEnabled(meta.customNameEnabled);
-    }
-
-    if (meta.icon != null) {
-      try {
-        arena.setIcon(meta.icon);
-      } catch (Exception e) {
-        warn(sender, "Failed to apply the arena icon (incompatible item?): " + e.getMessage());
-      }
     }
 
     if (meta.weatherType != null)
@@ -232,9 +219,6 @@ public class PackImporter {
         arena.setTeamSpawn(team, data.spawn);
       if (data.bed != null)
         arena.setBedLocation(team, data.bed);
-
-      applyEffects(sender, arena, team, data.baseOnlyEffects, true);
-      applyEffects(sender, arena, team, data.permanentEffects, false);
     }
 
     for (PackMeta.SpawnerData spawner : meta.spawners) {
@@ -247,28 +231,6 @@ public class PackImporter {
       }
 
       arena.addSpawner(spawner.location, dropType);
-    }
-
-    if (meta.persistentStorageDump != null && !meta.persistentStorageDump.isEmpty()) {
-      try {
-        arena.getPersistentStorage().deserialize(new StringReader(meta.persistentStorageDump));
-      } catch (Exception e) {
-        warn(sender, "Failed to restore the arena's addon data (persistent storage): " + e.getMessage());
-      }
-    }
-  }
-
-  private static void applyEffects(CommandSender sender, Arena arena, Team team,
-                                   Iterable<PackMeta.EffectData> effects, boolean baseOnly) {
-    for (PackMeta.EffectData effect : effects) {
-      final PotionEffectType type = PotionEffectType.getByName(effect.type);
-
-      if (type == null) {
-        warn(sender, "Skipping unknown potion effect '" + effect.type + "' for team " + team.name());
-        continue;
-      }
-
-      arena.addTeamEffect(team, baseOnly, type, effect.amplifier);
     }
   }
 
@@ -323,9 +285,8 @@ public class PackImporter {
     Console.printWarn(message);
   }
 
-  private static void fail(CommandSender sender, File tmpDir, String message, @Nullable Throwable cause) {
+  private static void fail(CommandSender sender, String message, @Nullable Throwable cause) {
     OperationLock.release();
-    WorldFiles.deleteDirectoryAsync(tmpDir);
 
     if (cause != null) {
       Console.printError(message);
@@ -335,7 +296,7 @@ public class PackImporter {
     if (Bukkit.isPrimaryThread()) {
       sender.sendMessage("§c" + message);
     } else {
-      Bukkit.getScheduler().runTask(ArenaPackPlugin.getInstance(),
+      Bukkit.getScheduler().runTask(ArenaPacksPlugin.getInstance(),
           () -> sender.sendMessage("§c" + message));
     }
   }
