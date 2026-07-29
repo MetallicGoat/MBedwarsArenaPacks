@@ -1,0 +1,300 @@
+{
+  "format": 1,
+  "pack": {
+    "name": "Treenan",
+    "version": 1,
+    "exported-by": "MBedwarsArenaPacks 1.0.0",
+    "exported-at": "2026-07-29T21:04:25Z",
+    "minecraft-version": "1.8.8",
+    "mbedwars-api-version": 208,
+    "original-world-name": "treenan"
+  },
+  "arena": {
+    "name": "Treenan",
+    "custom-name": "Nameless Arena",
+    "custom-name-enabled": false,
+    "min-players": 2,
+    "players-per-team": 4,
+    "regeneration-type": "region",
+    "weather-type": "UNTOUCHED",
+    "time-type": "UNTOUCHED",
+    "authors": [],
+    "region": {
+      "min": {
+        "x": -110.0,
+        "y": 19.0,
+        "z": -110.0
+      },
+      "max": {
+        "x": 110.0,
+        "y": 126.0,
+        "z": 110.0
+      }
+    },
+    "spectator-spawn": {
+      "x": 0.5,
+      "y": 118.0,
+      "z": 0.5,
+      "yaw": 270.0,
+      "pitch": 0.0
+    },
+    "teams": {
+      "YELLOW": {
+        "spawn": {
+          "x": 0.5,
+          "y": 66.0,
+          "z": -77.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 0.0,
+          "y": 67.0,
+          "z": -66.0,
+          "direction": "NORTH"
+        }
+      },
+      "RED": {
+        "spawn": {
+          "x": 78.5,
+          "y": 66.0,
+          "z": 0.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 66.0,
+          "y": 67.0,
+          "z": 0.0,
+          "direction": "EAST"
+        }
+      },
+      "BLUE": {
+        "spawn": {
+          "x": 78.5,
+          "y": 66.0,
+          "z": 0.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 0.0,
+          "y": 67.0,
+          "z": 66.0,
+          "direction": "SOUTH"
+        }
+      },
+      "LIGHT_GREEN": {
+        "spawn": {
+          "x": -77.5,
+          "y": 66.0,
+          "z": 0.5,
+          "yaw": 270.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": -66.0,
+          "y": 67.0,
+          "z": 0.0,
+          "direction": "WEST"
+        }
+      }
+    },
+    "spawners": [
+      {
+        "type": "diamond",
+        "location": {
+          "x": 29.5,
+          "y": 67.0,
+          "z": -30.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": -30.5,
+          "y": 67.0,
+          "z": -28.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": -28.5,
+          "y": 67.0,
+          "z": 31.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": 31.5,
+          "y": 67.0,
+          "z": 29.5
+        }
+      },
+      {
+        "type": "emerald",
+        "location": {
+          "x": -6.5,
+          "y": 71.0,
+          "z": -10.5
+        }
+      },
+      {
+        "type": "emerald",
+        "location": {
+          "x": 8.5,
+          "y": 71.0,
+          "z": 12.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 0.5,
+          "y": 66.0,
+          "z": 82.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 0.5,
+          "y": 66.0,
+          "z": 82.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 82.5,
+          "y": 66.0,
+          "z": 0.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 82.5,
+          "y": 66.0,
+          "z": 0.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 0.5,
+          "y": 66.0,
+          "z": -81.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 0.5,
+          "y": 66.0,
+          "z": -81.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": -81.5,
+          "y": 66.0,
+          "z": 0.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": -81.5,
+          "y": 66.0,
+          "z": 0.5
+        }
+      }
+    ],
+    "holograms": [
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": -5.5,
+          "y": 66.0,
+          "z": 80.0,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": 80.0,
+          "y": 66.0,
+          "z": 6.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": 6.5,
+          "y": 66.0,
+          "z": -79.0,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": -5.5,
+          "y": 66.0,
+          "z": -79.0,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": -79.0,
+          "y": 66.0,
+          "z": -5.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": -79.0,
+          "y": 66.0,
+          "z": 6.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": 6.5,
+          "y": 66.0,
+          "z": 80.0,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": 80.0,
+          "y": 66.0,
+          "z": -5.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        }
+      }
+    ]
+  }
+}

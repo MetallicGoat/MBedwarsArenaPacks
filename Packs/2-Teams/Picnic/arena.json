@@ -1,0 +1,182 @@
+{
+  "format": 1,
+  "pack": {
+    "name": "Picnic",
+    "version": 1,
+    "exported-by": "MBedwarsArenaPacks 1.0.0",
+    "exported-at": "2026-07-29T21:04:01Z",
+    "minecraft-version": "1.8.8",
+    "mbedwars-api-version": 208,
+    "original-world-name": "picnic"
+  },
+  "arena": {
+    "name": "Picnic",
+    "custom-name": "Picnic",
+    "custom-name-enabled": true,
+    "min-players": 2,
+    "players-per-team": 4,
+    "regeneration-type": "region",
+    "weather-type": "UNTOUCHED",
+    "time-type": "UNTOUCHED",
+    "authors": [],
+    "region": {
+      "min": {
+        "x": -100.0,
+        "y": 35.0,
+        "z": -100.0
+      },
+      "max": {
+        "x": 100.0,
+        "y": 126.0,
+        "z": 100.0
+      }
+    },
+    "spectator-spawn": {
+      "x": 0.5,
+      "y": 118.0,
+      "z": 0.5,
+      "yaw": 0.0,
+      "pitch": 0.0
+    },
+    "teams": {
+      "RED": {
+        "spawn": {
+          "x": 0.5,
+          "y": 64.0,
+          "z": -73.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 0.0,
+          "y": 65.0,
+          "z": -62.0,
+          "direction": "NORTH"
+        }
+      },
+      "BLUE": {
+        "spawn": {
+          "x": 0.5,
+          "y": 64.0,
+          "z": 73.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 0.0,
+          "y": 65.0,
+          "z": 61.0,
+          "direction": "SOUTH"
+        }
+      }
+    },
+    "spawners": [
+      {
+        "type": "emerald",
+        "location": {
+          "x": 8.5,
+          "y": 69.0,
+          "z": 12.5
+        }
+      },
+      {
+        "type": "emerald",
+        "location": {
+          "x": -6.5,
+          "y": 69.0,
+          "z": -10.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": -47.5,
+          "y": 64.0,
+          "z": -9.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": 48.5,
+          "y": 64.0,
+          "z": 10.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 0.5,
+          "y": 64.0,
+          "z": -77.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 0.5,
+          "y": 64.0,
+          "z": -77.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 0.5,
+          "y": 64.0,
+          "z": 77.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 0.5,
+          "y": 64.0,
+          "z": 77.5
+        }
+      }
+    ],
+    "holograms": [
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": 6.5,
+          "y": 64.0,
+          "z": -75.0,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": -5.5,
+          "y": 64.0,
+          "z": -75.0,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": -5.5,
+          "y": 64.0,
+          "z": 75.0,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": 6.5,
+          "y": 64.0,
+          "z": 75.0,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      }
+    ]
+  }
+}
