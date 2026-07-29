@@ -1,7 +1,0 @@
-name: MBedwarsArenaPack
-version: 1.0.0
-author: MetallicGoat
-main: me.metallicgoat.arenapack.ArenaPackPlugin
-description: Export and import portable MBedwars arena packs
-api-version: 1.13
-depend: [ MBedwars ]
