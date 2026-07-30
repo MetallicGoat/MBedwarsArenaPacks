@@ -78,6 +78,7 @@ public class PackMetaCodec {
     arena.add("region", region);
 
     arena.add("spectator-spawn", meta.spectatorSpawn != null ? LocJson.write(meta.spectatorSpawn) : null);
+    arena.add("lobby", meta.lobby != null ? LocJson.write(meta.lobby) : null);
 
     final JsonObject teams = new JsonObject();
 
@@ -187,7 +188,7 @@ public class PackMetaCodec {
     if (meta.packName == null)
       meta.packName = meta.arenaName;
 
-    meta.customName = getString(arena, "custom-name");
+    meta.customName = PackMeta.customNameOr(getString(arena, "custom-name"), meta.arenaName);
     meta.customNameEnabled = getBoolean(arena, "custom-name-enabled");
     meta.minPlayers = getInt(arena, "min-players", 0);
     meta.playersPerTeam = getInt(arena, "players-per-team", 1);
@@ -212,6 +213,11 @@ public class PackMetaCodec {
 
     if (spectatorSpawn != null)
       meta.spectatorSpawn = LocJson.readXYZYP(spectatorSpawn);
+
+    final JsonObject lobby = getObject(arena, "lobby");
+
+    if (lobby != null)
+      meta.lobby = LocJson.readXYZYP(lobby);
 
     final JsonObject teams = getObject(arena, "teams");
 

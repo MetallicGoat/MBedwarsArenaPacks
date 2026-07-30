@@ -12,9 +12,9 @@ snaps them to the grid a hand-written pack would use:
     yaw     -> nearest 5, normalised into [0, 360)  -> 0 / 90 / 180 / 270
     pitch   -> 0             (level gaze; see PITCH_SNAP_LIMIT)
 
-Applied to team spawns, the spectator spawn and hologram (dealer NPC) locations.
-Bed locations, spawner locations and region corners are left alone: MBedwars
-derives those from block positions, so they are already exact.
+Applied to team spawns, the spectator spawn, the lobby and hologram (dealer NPC)
+locations. Bed locations, spawner locations and region corners are left alone:
+MBedwars derives those from block positions, so they are already exact.
 
 world.zip files are never touched. Output formatting matches
 PackMetaCodec.write exactly, so tidying a pack does not create a spurious diff
@@ -97,11 +97,12 @@ def fix_pack(meta_file, dry_run):
             fix_position(spawn, changes, f"team {team} spawn")
             fix_facing(spawn, changes, warnings, f"team {team} spawn")
 
-    spectator = arena.get("spectator-spawn")
+    for key, label in (("spectator-spawn", "spectator spawn"), ("lobby", "lobby")):
+        location = arena.get(key)
 
-    if isinstance(spectator, dict):
-        fix_position(spectator, changes, "spectator spawn")
-        fix_facing(spectator, changes, warnings, "spectator spawn")
+        if isinstance(location, dict):
+            fix_position(location, changes, label)
+            fix_facing(location, changes, warnings, label)
 
     for index, hologram in enumerate(arena.get("holograms") or []):
         location = (hologram or {}).get("location")

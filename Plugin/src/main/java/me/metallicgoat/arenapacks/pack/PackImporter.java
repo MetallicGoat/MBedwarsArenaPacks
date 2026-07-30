@@ -140,7 +140,7 @@ public class PackImporter {
         throw new IllegalStateException("Failed to create the arena: " + e.getMessage(), e);
       }
 
-      applyMeta(sender, arena, meta);
+      applyMeta(sender, arena, world, meta);
       spawnHolograms(sender, world, meta);
 
       arena.setStatus(ArenaStatus.STOPPED);
@@ -161,7 +161,11 @@ public class PackImporter {
       OperationLock.release();
 
       sender.sendMessage("§aImported arena '" + arenaName + "' (world: " + worldName + ").");
-      sender.sendMessage("§eThe lobby location and arena icon are not part of packs - set them with the MBedwars setup GUI before enabling the arena.");
+
+      if (meta.lobby == null)
+        sender.sendMessage("§eThis pack has no lobby location - set one with '/bw arena set lobby " + arenaName + "' before enabling the arena.");
+
+      sender.sendMessage("§eThe arena icon is not part of packs - set one with the MBedwars setup GUI.");
     } catch (Exception e) {
       // Fatal failure: undo the world install so the import leaves no traces
       if (world != null)
@@ -179,7 +183,7 @@ public class PackImporter {
   }
 
   /** Applies all optional metadata. Per-item problems warn and continue. */
-  private static void applyMeta(CommandSender sender, Arena arena, PackMeta meta) {
+  private static void applyMeta(CommandSender sender, Arena arena, World world, PackMeta meta) {
     for (String author : meta.authors)
       arena.addAuthor(author);
 
@@ -188,10 +192,10 @@ public class PackImporter {
     if (meta.playersPerTeam > 0)
       arena.setPlayersPerTeam(meta.playersPerTeam);
 
-    if (meta.customName != null && !meta.customName.isEmpty()) {
-      arena.setCustomName(meta.customName);
-      arena.setCustomNameEnabled(meta.customNameEnabled);
-    }
+    // Always set one: a fresh arena would otherwise keep MBedwars' "Nameless Arena".
+    // Falls back to the arena's own name, which is the override when imported under one.
+    arena.setCustomName(PackMeta.customNameOr(meta.customName, arena.getName()));
+    arena.setCustomNameEnabled(meta.customNameEnabled);
 
     if (meta.weatherType != null)
       arena.setWeatherType(parseEnum(ArenaWeatherType.class, meta.weatherType, ArenaWeatherType.UNTOUCHED, sender, "weather type"));
@@ -200,6 +204,10 @@ public class PackImporter {
 
     if (meta.spectatorSpawn != null)
       arena.setSpectatorSpawn(meta.spectatorSpawn);
+
+    // Stored world-less, so it always lands in the freshly imported world
+    if (meta.lobby != null)
+      arena.setLobbyLocation(meta.lobby.toLocation(world));
 
     for (Map.Entry<String, PackMeta.TeamData> entry : meta.teams.entrySet()) {
       final Team team;

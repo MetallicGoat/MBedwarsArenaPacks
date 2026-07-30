@@ -12,7 +12,7 @@
   "arena": {
     "name": "Aquarium",
     "custom-name": "Aquarium",
-    "custom-name-enabled": true,
+    "custom-name-enabled": false,
     "min-players": 2,
     "players-per-team": 4,
     "regeneration-type": "region",
@@ -32,6 +32,13 @@
       }
     },
     "spectator-spawn": {
+      "x": 0.5,
+      "y": 118.0,
+      "z": 0.5,
+      "yaw": 90.0,
+      "pitch": 0.0
+    },
+    "lobby": {
       "x": 0.5,
       "y": 118.0,
       "z": 0.5,

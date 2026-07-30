@@ -2,7 +2,7 @@
 repo:
   # owner/name of the GitHub repository
   slug: "MetallicGoat/MBedwarsArenaPacks"
-  branch: "main"
+  branch: "master"
   # Path of the pack index inside the repository. Pack directories listed in it
   # are resolved relative to this file's folder, so the default looks for
   # Packs/index.json and finds each pack at Packs/<name>/

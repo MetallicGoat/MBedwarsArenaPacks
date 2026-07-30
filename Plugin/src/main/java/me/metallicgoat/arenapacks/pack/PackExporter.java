@@ -26,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.Nullable;
 
 public class PackExporter {
 
@@ -152,7 +153,7 @@ public class PackExporter {
 
     meta.arenaName = arena.getName();
     meta.customNameEnabled = arena.isCustomNameEnabled();
-    meta.customName = arena.getCustomName();
+    meta.customName = PackMeta.customNameOr(arena.getCustomName(), arena.getName());
     meta.minPlayers = arena.getMinPlayers();
     meta.playersPerTeam = arena.getPlayersPerTeam();
     meta.regenTypeId = arena.getRegenerationType().getId();
@@ -168,6 +169,7 @@ public class PackExporter {
     final XYZYP spectatorSpawn = arena.getSpectatorSpawn();
 
     meta.spectatorSpawn = spectatorSpawn != null ? new XYZYP(spectatorSpawn) : null;
+    meta.lobby = captureLobby(arena, world);
 
     for (Team team : arena.getEnabledTeams()) {
       final PackMeta.TeamData data = new PackMeta.TeamData();
@@ -196,6 +198,34 @@ public class PackExporter {
     }
 
     return meta;
+  }
+
+  /**
+   * The lobby is the one location MBedwars stores as a full {@link Location}, so
+   * it may point at a completely different world. Only coordinates inside the
+   * arena's own world can travel with the pack; a lobby in a shared hub world is
+   * skipped, since applying those coordinates to the imported world would drop
+   * players somewhere arbitrary.
+   */
+  private static @Nullable XYZYP captureLobby(Arena arena, World world) {
+    if (!arena.hasLobbyLocation())
+      return null;
+
+    final Location lobby = arena.getLobbyLocation();
+
+    if (lobby == null)
+      return null;
+
+    if (!world.equals(lobby.getWorld())) {
+      Console.printWarn("Arena '" + arena.getName() + "' has its lobby in world '"
+          + (lobby.getWorld() != null ? lobby.getWorld().getName() : "?")
+          + "' rather than the arena's own world, so it is not part of the pack."
+          + " Set a lobby after importing.");
+
+      return null;
+    }
+
+    return new XYZYP(lobby);
   }
 
   private static boolean isInsideRegion(Location location, XYZ corner1, XYZ corner2) {

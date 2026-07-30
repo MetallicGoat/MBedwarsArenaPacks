@@ -11,7 +11,7 @@
   },
   "arena": {
     "name": "Carapace",
-    "custom-name": "Nameless Arena",
+    "custom-name": "Carapace",
     "custom-name-enabled": false,
     "min-players": 2,
     "players-per-team": 4,
@@ -32,6 +32,13 @@
       }
     },
     "spectator-spawn": {
+      "x": 0.5,
+      "y": 126.0,
+      "z": 0.5,
+      "yaw": 270.0,
+      "pitch": 0.0
+    },
+    "lobby": {
       "x": 0.5,
       "y": 126.0,
       "z": 0.5,

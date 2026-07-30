@@ -42,10 +42,26 @@ public class PackMeta {
   public XYZ regionMin;
   public XYZ regionMax;
   public @Nullable XYZYP spectatorSpawn;
+  /**
+   * Only exported when it sits inside the arena's own world - MBedwars stores it
+   * as a full {@link org.bukkit.Location}, and a lobby pointing into a shared hub
+   * world cannot be carried to another server.
+   */
+  public @Nullable XYZYP lobby;
   // key = Team enum name
   public Map<String, TeamData> teams = new LinkedHashMap<>();
   public List<SpawnerData> spawners = new ArrayList<>();
   public List<HologramData> holograms = new ArrayList<>();
+
+  /**
+   * An arena with no custom name of its own would show up as MBedwars' default
+   * "Nameless Arena", so a blank one falls back to the arena's own name. Applied
+   * when capturing, when reading a (possibly hand-edited) pack, and again on
+   * import - so a pack never carries a nameless arena in the first place.
+   */
+  public static String customNameOr(@Nullable String customName, String arenaName) {
+    return customName == null || customName.trim().isEmpty() ? arenaName : customName;
+  }
 
   public static class TeamData {
     public @Nullable XYZYP spawn;

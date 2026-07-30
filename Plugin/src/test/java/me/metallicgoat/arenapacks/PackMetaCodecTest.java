@@ -53,6 +53,10 @@ public class PackMetaCodecTest {
     assertEquals(210, read.regionMax.getX(), 0);
     assertNotNull(read.spectatorSpawn);
     assertEquals(90, read.spectatorSpawn.getY(), 0);
+    assertNotNull(read.lobby);
+    assertEquals(100.5, read.lobby.getX(), 0);
+    assertEquals(91, read.lobby.getY(), 0);
+    assertEquals(180f, read.lobby.getYaw(), 0);
 
     assertEquals(2, read.teams.size());
 
@@ -200,6 +204,7 @@ public class PackMetaCodecTest {
     meta.regionMin = new XYZ(10, 40, 10);
     meta.regionMax = new XYZ(210, 120, 210);
     meta.spectatorSpawn = new XYZYP(100.5, 90, 100.5, 0f, 0f);
+    meta.lobby = new XYZYP(100.5, 91, 100.5, 180f, 0f);
 
     final PackMeta.TeamData red = new PackMeta.TeamData();
 

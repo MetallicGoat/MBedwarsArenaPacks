@@ -48,8 +48,10 @@ All commands live under `/bw arenapacks`:
 Notes:
 - Exporting requires the arena to be **stopped**, and ships the arena's **entire world folder**
   — one world per map is assumed.
-- The **lobby location and arena icon are not exported** (the lobby usually points into a
-  shared lobby world). Set them after importing before enabling the arena.
+- The **arena icon is not exported**. Set one after importing.
+- The **lobby location travels only if it sits inside the arena's own world**. MBedwars stores
+  it as a full location including a world, so a lobby in a shared hub world cannot be carried
+  to another server — the export warns and skips it, and the import tells you to set one.
 - **Team potion effects and addon data** (MBedwars' per-arena persistent storage) are not part
   of a pack either — configure those per server.
 - Imported worlds get a fresh folder name (default `arenapacks_<arena>`, see `config.yml`).
@@ -98,6 +100,8 @@ filtered, so a zipped datapack under `datapacks/` still ships.
         "bed": { "x": 25.0, "y": 78.0, "z": 100.0, "direction": "WEST" }
       }
     },
+    "spectator-spawn": { "x": 100.5, "y": 90.0, "z": 100.5, "yaw": 0.0, "pitch": 0.0 },
+    "lobby": { "x": 100.5, "y": 90.0, "z": 100.5, "yaw": 0.0, "pitch": 0.0 },
     "spawners": [{ "type": "iron", "location": { "x": 30.5, "y": 78.0, "z": 100.5 } }],
     "holograms": [
       { "controller": "DEALER", "location": { "x": 22.5, "y": 78.0, "z": 98.5, "yaw": 180.0, "pitch": 0.0 } }
@@ -120,7 +124,7 @@ The plugin fetches packs from a plain GitHub repository via `raw.githubuserconte
 ```yaml
 repo:
   slug: "YourName/your-arena-packs"
-  branch: "main"
+  branch: "master"
   index-path: "Packs/index.json"
 ```
 
@@ -184,7 +188,7 @@ hand-written pack would use:
 | `yaw` | nearest `5`, normalised into `[0, 360)` — in practice `0` / `90` / `180` / `270` |
 | `pitch` | `0`; anything more than 10° off level is assumed deliberate and only reported |
 
-It rewrites team spawns, the spectator spawn and hologram (dealer) locations. Bed and spawner
+It rewrites team spawns, the spectator spawn, the lobby and hologram (dealer) locations. Bed and spawner
 locations and region corners are left alone — MBedwars derives those from block positions, so
 they are already exact. `world.zip` is never touched, and the output is byte-identical to what
 the exporter itself writes, so re-exporting an unchanged arena still produces no diff.
