@@ -48,7 +48,6 @@ All commands live under `/bw arenapacks`:
 Notes:
 - Exporting requires the arena to be **stopped**, and ships the arena's **entire world folder**
   — one world per map is assumed.
-- The **arena icon is not exported**. Set one after importing.
 - The **lobby location travels only if it sits inside the arena's own world**. MBedwars stores
   it as a full location including a world, so a lobby in a shared hub world cannot be carried
   to another server — the export warns and skips it, and the import tells you to set one.
@@ -67,10 +66,19 @@ Amazonia/
   world.zip    # the world folder's contents, minus the entries listed below
 ```
 
-`world.zip` skips `uid.dat`, `session.lock`, `level.dat_old`, `playerdata`, `stats` and
-`advancements`, plus any `.zip` or `.txt` sitting in the world folder root — so world backup
-archives and build notes kept next to `level.dat` stay out of the pack. Only the root level is
-filtered, so a zipped datapack under `datapacks/` still ships.
+`world.zip` ships `level.dat`, `region/` and `data/` — nothing else. Excluded from the world
+folder root:
+
+| Excluded | Why |
+|---|---|
+| `uid.dat`, `session.lock` | world identity and lock; must be fresh on the target server |
+| `playerdata`, `stats`, `advancements` | per-player data from the build server |
+| `level.dat_old`, `level.dat_old.gz`, `*.zip`, `*.txt` | backups and build notes left beside `level.dat` |
+| `DIM-1`, `DIM1` | a single-player world's nether and end. Spigot keeps dimensions in separate world folders, so shipping these makes the server log `Failed to delete directory … not empty` on import. A Bed Wars arena uses neither. |
+| `forcedchunks.dat` | Forge chunk-loader file |
+
+Only the root level is filtered, so a zipped datapack under `datapacks/` still ships, and
+`data/` is kept intact because it can hold `map_*.dat` for maps placed in item frames.
 
 `arena.json` is meant to be edited by hand — every location is a plain object:
 

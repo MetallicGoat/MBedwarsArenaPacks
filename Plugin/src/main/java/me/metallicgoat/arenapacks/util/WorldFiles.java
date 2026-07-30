@@ -9,14 +9,17 @@ import java.util.Set;
 
 public class WorldFiles {
 
-  /** Locks, the world UUID and player-specific data. */
   private static final Set<String> EXCLUDED_NAMES = new HashSet<>(Arrays.asList(
       "uid.dat",
       "session.lock",
       "level.dat_old",
+      "level.dat_old.gz",
       "playerdata",
       "stats",
-      "advancements"
+      "advancements",
+      "dim-1",
+      "dim1",
+      "forcedchunks.dat"
   ));
 
   /**

@@ -164,8 +164,6 @@ public class PackImporter {
 
       if (meta.lobby == null)
         sender.sendMessage("§eThis pack has no lobby location - set one with '/bw arena set lobby " + arenaName + "' before enabling the arena.");
-
-      sender.sendMessage("§eThe arena icon is not part of packs - set one with the MBedwars setup GUI.");
     } catch (Exception e) {
       // Fatal failure: undo the world install so the import leaves no traces
       if (world != null)
