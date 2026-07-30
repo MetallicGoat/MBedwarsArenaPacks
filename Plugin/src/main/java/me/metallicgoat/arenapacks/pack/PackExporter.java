@@ -153,7 +153,9 @@ public class PackExporter {
 
     meta.arenaName = arena.getName();
     meta.customNameEnabled = arena.isCustomNameEnabled();
-    meta.customName = PackMeta.customNameOr(arena.getCustomName(), arena.getName());
+    meta.customName = arena.isCustomNameEnabled()
+        ? PackMeta.customNameOr(arena.getCustomName(), arena.getName())
+        : arena.getName();
     meta.minPlayers = arena.getMinPlayers();
     meta.playersPerTeam = arena.getPlayersPerTeam();
     meta.regenTypeId = arena.getRegenerationType().getId();

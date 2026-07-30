@@ -1,17 +1,17 @@
 {
   "format": 1,
   "pack": {
-    "name": "Picnic",
+    "name": "Cryptic",
     "version": 1,
     "exported-by": "MBedwarsArenaPacks 1.0.0",
-    "exported-at": "2026-07-29T21:04:01Z",
+    "exported-at": "2026-07-30T02:10:51Z",
     "minecraft-version": "1.8.8",
     "mbedwars-api-version": 208,
-    "original-world-name": "picnic"
+    "original-world-name": "Cryptic"
   },
   "arena": {
-    "name": "Picnic",
-    "custom-name": "Picnic",
+    "name": "Cryptic",
+    "custom-name": "Cryptic",
     "custom-name-enabled": false,
     "min-players": 2,
     "players-per-team": 4,
@@ -21,145 +21,145 @@
     "authors": [],
     "region": {
       "min": {
-        "x": -70.0,
-        "y": 35.0,
-        "z": -100.0
+        "x": -80.0,
+        "y": 40.0,
+        "z": -120.0
       },
       "max": {
-        "x": 70.0,
-        "y": 126.0,
-        "z": 100.0
+        "x": 80.0,
+        "y": 161.0,
+        "z": 120.0
       }
     },
     "spectator-spawn": {
       "x": 0.5,
-      "y": 118.0,
+      "y": 152.0,
       "z": 0.5,
-      "yaw": 0.0,
+      "yaw": 180.0,
       "pitch": 0.0
     },
     "lobby": {
       "x": 0.5,
-      "y": 118.0,
+      "y": 152.0,
       "z": 0.5,
-      "yaw": 0.0,
+      "yaw": 180.0,
       "pitch": 0.0
     },
     "teams": {
       "RED": {
         "spawn": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": -73.5,
-          "yaw": 0.0,
-          "pitch": 0.0
-        },
-        "bed": {
-          "x": 0.0,
-          "y": 65.0,
-          "z": -62.0,
-          "direction": "NORTH"
-        }
-      },
-      "BLUE": {
-        "spawn": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": 73.5,
+          "x": 2.5,
+          "y": 78.0,
+          "z": 86.5,
           "yaw": 180.0,
           "pitch": 0.0
         },
         "bed": {
-          "x": 0.0,
-          "y": 65.0,
-          "z": 61.0,
+          "x": 2.0,
+          "y": 77.0,
+          "z": 73.0,
           "direction": "SOUTH"
+        }
+      },
+      "BLUE": {
+        "spawn": {
+          "x": 2.5,
+          "y": 78.0,
+          "z": -85.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 2.0,
+          "y": 77.0,
+          "z": -73.0,
+          "direction": "NORTH"
         }
       }
     },
     "spawners": [
       {
-        "type": "emerald",
+        "type": "diamond",
         "location": {
-          "x": 8.5,
-          "y": 69.0,
-          "z": 12.5
-        }
-      },
-      {
-        "type": "emerald",
-        "location": {
-          "x": -6.5,
-          "y": 69.0,
-          "z": -10.5
+          "x": -69.5,
+          "y": 79.0,
+          "z": 0.5
         }
       },
       {
         "type": "diamond",
         "location": {
-          "x": -47.5,
-          "y": 64.0,
-          "z": -9.5
+          "x": 70.5,
+          "y": 74.0,
+          "z": 0.5
         }
       },
       {
-        "type": "diamond",
+        "type": "emerald",
         "location": {
-          "x": 48.5,
-          "y": 64.0,
-          "z": 10.5
+          "x": 21.5,
+          "y": 69.0,
+          "z": 0.5
         }
       },
       {
-        "type": "gold",
+        "type": "emerald",
         "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": -77.5
-        }
-      },
-      {
-        "type": "iron",
-        "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": -77.5
+          "x": -24.5,
+          "y": 82.0,
+          "z": 0.5
         }
       },
       {
         "type": "gold",
         "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": 77.5
+          "x": 2.5,
+          "y": 78.0,
+          "z": 90.5
         }
       },
       {
         "type": "iron",
         "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": 77.5
+          "x": 2.5,
+          "y": 78.0,
+          "z": 90.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 2.5,
+          "y": 78.0,
+          "z": -89.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 2.5,
+          "y": 78.0,
+          "z": -89.5
         }
       }
     ],
     "holograms": [
       {
-        "controller": "DEALER",
+        "controller": "UPGRADE_DEALER",
         "location": {
           "x": 6.5,
-          "y": 64.0,
-          "z": -75.0,
+          "y": 78.0,
+          "z": 86.5,
           "yaw": 90.0,
           "pitch": 0.0
         }
       },
       {
-        "controller": "UPGRADE_DEALER",
+        "controller": "DEALER",
         "location": {
-          "x": -5.5,
-          "y": 64.0,
-          "z": -75.0,
+          "x": -1.5,
+          "y": 78.0,
+          "z": 86.5,
           "yaw": 270.0,
           "pitch": 0.0
         }
@@ -167,20 +167,20 @@
       {
         "controller": "DEALER",
         "location": {
-          "x": -5.5,
-          "y": 64.0,
-          "z": 75.0,
-          "yaw": 270.0,
+          "x": 6.5,
+          "y": 78.0,
+          "z": -85.5,
+          "yaw": 90.0,
           "pitch": 0.0
         }
       },
       {
         "controller": "UPGRADE_DEALER",
         "location": {
-          "x": 6.5,
-          "y": 64.0,
-          "z": 75.0,
-          "yaw": 90.0,
+          "x": -1.5,
+          "y": 78.0,
+          "z": -85.5,
+          "yaw": 270.0,
           "pitch": 0.0
         }
       }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "pack": {
-    "name": "Picnic",
+    "name": "Gardens",
     "version": 1,
     "exported-by": "MBedwarsArenaPacks 1.0.0",
-    "exported-at": "2026-07-29T21:04:01Z",
+    "exported-at": "2026-07-30T02:11:05Z",
     "minecraft-version": "1.8.8",
     "mbedwars-api-version": 208,
-    "original-world-name": "picnic"
+    "original-world-name": "Gardens"
   },
   "arena": {
-    "name": "Picnic",
-    "custom-name": "Picnic",
+    "name": "Gardens",
+    "custom-name": "Gardens",
     "custom-name-enabled": false,
     "min-players": 2,
     "players-per-team": 4,
@@ -21,59 +21,59 @@
     "authors": [],
     "region": {
       "min": {
-        "x": -70.0,
-        "y": 35.0,
-        "z": -100.0
+        "x": -130.0,
+        "y": 48.0,
+        "z": -80.0
       },
       "max": {
-        "x": 70.0,
-        "y": 126.0,
-        "z": 100.0
+        "x": 130.0,
+        "y": 155.0,
+        "z": 80.0
       }
     },
     "spectator-spawn": {
       "x": 0.5,
-      "y": 118.0,
+      "y": 149.0,
       "z": 0.5,
-      "yaw": 0.0,
+      "yaw": 90.0,
       "pitch": 0.0
     },
     "lobby": {
       "x": 0.5,
-      "y": 118.0,
+      "y": 149.0,
       "z": 0.5,
-      "yaw": 0.0,
+      "yaw": 90.0,
       "pitch": 0.0
     },
     "teams": {
       "RED": {
         "spawn": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": -73.5,
-          "yaw": 0.0,
+          "x": 94.5,
+          "y": 79.0,
+          "z": 0.5,
+          "yaw": 90.0,
           "pitch": 0.0
         },
         "bed": {
-          "x": 0.0,
-          "y": 65.0,
-          "z": -62.0,
-          "direction": "NORTH"
+          "x": 79.0,
+          "y": 77.0,
+          "z": 0.0,
+          "direction": "EAST"
         }
       },
       "BLUE": {
         "spawn": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": 73.5,
-          "yaw": 180.0,
+          "x": -93.5,
+          "y": 79.0,
+          "z": 0.5,
+          "yaw": 270.0,
           "pitch": 0.0
         },
         "bed": {
-          "x": 0.0,
-          "y": 65.0,
-          "z": 61.0,
-          "direction": "SOUTH"
+          "x": -79.0,
+          "y": 77.0,
+          "z": 0.0,
+          "direction": "WEST"
         }
       }
     },
@@ -81,65 +81,65 @@
       {
         "type": "emerald",
         "location": {
-          "x": 8.5,
-          "y": 69.0,
-          "z": 12.5
+          "x": 21.5,
+          "y": 77.0,
+          "z": 21.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": 0.5,
+          "y": 78.0,
+          "z": 52.5
         }
       },
       {
         "type": "emerald",
         "location": {
-          "x": -6.5,
-          "y": 69.0,
-          "z": -10.5
+          "x": -20.5,
+          "y": 77.0,
+          "z": -20.5
         }
       },
       {
         "type": "diamond",
         "location": {
-          "x": -47.5,
-          "y": 64.0,
-          "z": -9.5
-        }
-      },
-      {
-        "type": "diamond",
-        "location": {
-          "x": 48.5,
-          "y": 64.0,
-          "z": 10.5
+          "x": 0.5,
+          "y": 78.0,
+          "z": -51.5
         }
       },
       {
         "type": "gold",
         "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": -77.5
+          "x": -97.5,
+          "y": 79.0,
+          "z": 0.5
         }
       },
       {
         "type": "iron",
         "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": -77.5
+          "x": -97.5,
+          "y": 79.0,
+          "z": 0.5
         }
       },
       {
         "type": "gold",
         "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": 77.5
+          "x": 98.5,
+          "y": 79.0,
+          "z": 0.5
         }
       },
       {
         "type": "iron",
         "location": {
-          "x": 0.5,
-          "y": 64.0,
-          "z": 77.5
+          "x": 98.5,
+          "y": 79.0,
+          "z": 0.5
         }
       }
     ],
@@ -147,40 +147,40 @@
       {
         "controller": "DEALER",
         "location": {
-          "x": 6.5,
-          "y": 64.0,
-          "z": -75.0,
-          "yaw": 90.0,
+          "x": -93.5,
+          "y": 79.0,
+          "z": -7.5,
+          "yaw": 0.0,
           "pitch": 0.0
         }
       },
       {
         "controller": "UPGRADE_DEALER",
         "location": {
-          "x": -5.5,
-          "y": 64.0,
-          "z": -75.0,
-          "yaw": 270.0,
+          "x": -93.5,
+          "y": 79.0,
+          "z": 8.5,
+          "yaw": 180.0,
           "pitch": 0.0
         }
       },
       {
         "controller": "DEALER",
         "location": {
-          "x": -5.5,
-          "y": 64.0,
-          "z": 75.0,
-          "yaw": 270.0,
+          "x": 94.5,
+          "y": 79.0,
+          "z": 8.5,
+          "yaw": 180.0,
           "pitch": 0.0
         }
       },
       {
         "controller": "UPGRADE_DEALER",
         "location": {
-          "x": 6.5,
-          "y": 64.0,
-          "z": 75.0,
-          "yaw": 90.0,
+          "x": 94.5,
+          "y": 79.0,
+          "z": -7.5,
+          "yaw": 0.0,
           "pitch": 0.0
         }
       }

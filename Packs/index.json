@@ -1,7 +1,10 @@
 {
   "format": 1,
   "packs": [
+    "2-Teams/Cryptic",
+    "2-Teams/Gardens",
     "2-Teams/Picnic",
+    "2-Teams/Ruins",
     "4-Teams/Aquarium",
     "4-Teams/Archway",
     "4-Teams/Carapace",
