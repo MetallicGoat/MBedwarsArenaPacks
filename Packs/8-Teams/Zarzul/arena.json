@@ -1,0 +1,527 @@
+{
+  "format": 1,
+  "pack": {
+    "name": "Zarzul",
+    "version": 1,
+    "exported-by": "MBedwarsArenaPacks 1.0.0",
+    "exported-at": "2026-08-12T23:42:04Z",
+    "minecraft-version": "1.8.8",
+    "mbedwars-api-version": 208,
+    "original-world-name": "Zarzul"
+  },
+  "arena": {
+    "name": "Zarzul",
+    "custom-name": "Zarzul",
+    "custom-name-enabled": false,
+    "min-players": 2,
+    "players-per-team": 2,
+    "regeneration-type": "region",
+    "weather-type": "UNTOUCHED",
+    "time-type": "UNTOUCHED",
+    "authors": [],
+    "region": {
+      "min": {
+        "x": -140.0,
+        "y": 20.0,
+        "z": -140.0
+      },
+      "max": {
+        "x": 140.0,
+        "y": 197.0,
+        "z": 140.0
+      }
+    },
+    "spectator-spawn": {
+      "x": 0.5,
+      "y": 189.0,
+      "z": 0.5,
+      "yaw": 180.0,
+      "pitch": 0.0
+    },
+    "lobby": {
+      "x": 0.5,
+      "y": 189.0,
+      "z": 0.5,
+      "yaw": 180.0,
+      "pitch": 0.0
+    },
+    "teams": {
+      "RED": {
+        "spawn": {
+          "x": 35.5,
+          "y": 92.0,
+          "z": -75.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 25.0,
+          "y": 92.0,
+          "z": -61.0,
+          "direction": "WEST"
+        }
+      },
+      "WHITE": {
+        "spawn": {
+          "x": -75.5,
+          "y": 92.0,
+          "z": 35.5,
+          "yaw": 270.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": -61.0,
+          "y": 92.0,
+          "z": 25.0,
+          "direction": "NORTH"
+        }
+      },
+      "YELLOW": {
+        "spawn": {
+          "x": 35.5,
+          "y": 92.0,
+          "z": 76.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 25.0,
+          "y": 92.0,
+          "z": 61.0,
+          "direction": "WEST"
+        }
+      },
+      "GRAY": {
+        "spawn": {
+          "x": -34.5,
+          "y": 92.0,
+          "z": -75.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": -25.0,
+          "y": 92.0,
+          "z": -61.0,
+          "direction": "EAST"
+        }
+      },
+      "CYAN": {
+        "spawn": {
+          "x": -34.5,
+          "y": 92.0,
+          "z": 76.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": -25.0,
+          "y": 92.0,
+          "z": 61.0,
+          "direction": "EAST"
+        }
+      },
+      "PINK": {
+        "spawn": {
+          "x": -75.5,
+          "y": 92.0,
+          "z": -34.5,
+          "yaw": 270.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": -61.0,
+          "y": 92.0,
+          "z": -25.0,
+          "direction": "SOUTH"
+        }
+      },
+      "LIGHT_GREEN": {
+        "spawn": {
+          "x": 76.5,
+          "y": 92.0,
+          "z": 35.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 61.0,
+          "y": 92.0,
+          "z": 25.0,
+          "direction": "NORTH"
+        }
+      },
+      "BLUE": {
+        "spawn": {
+          "x": 76.5,
+          "y": 92.0,
+          "z": -34.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        },
+        "bed": {
+          "x": 61.0,
+          "y": 92.0,
+          "z": -25.0,
+          "direction": "SOUTH"
+        }
+      }
+    },
+    "spawners": [
+      {
+        "type": "emerald",
+        "location": {
+          "x": 16.5,
+          "y": 104.0,
+          "z": 17.5
+        }
+      },
+      {
+        "type": "emerald",
+        "location": {
+          "x": -16.5,
+          "y": 104.0,
+          "z": 16.5
+        }
+      },
+      {
+        "type": "emerald",
+        "location": {
+          "x": -15.5,
+          "y": 104.0,
+          "z": -16.5
+        }
+      },
+      {
+        "type": "emerald",
+        "location": {
+          "x": 17.5,
+          "y": 104.0,
+          "z": -15.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": 0.5,
+          "y": 94.0,
+          "z": 103.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": 103.5,
+          "y": 94.0,
+          "z": 0.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": 0.5,
+          "y": 94.0,
+          "z": -102.5
+        }
+      },
+      {
+        "type": "diamond",
+        "location": {
+          "x": -102.5,
+          "y": 94.0,
+          "z": 0.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": -79.5,
+          "y": 92.0,
+          "z": -34.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": -79.5,
+          "y": 92.0,
+          "z": -34.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": -34.5,
+          "y": 92.0,
+          "z": -79.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": -34.5,
+          "y": 92.0,
+          "z": -79.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 35.5,
+          "y": 92.0,
+          "z": -79.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 35.5,
+          "y": 92.0,
+          "z": -79.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 80.5,
+          "y": 92.0,
+          "z": -34.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 80.5,
+          "y": 92.0,
+          "z": -34.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 80.5,
+          "y": 92.0,
+          "z": 35.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 80.5,
+          "y": 92.0,
+          "z": 35.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": 35.5,
+          "y": 92.0,
+          "z": 80.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": 35.5,
+          "y": 92.0,
+          "z": 80.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": -34.5,
+          "y": 92.0,
+          "z": 80.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": -34.5,
+          "y": 92.0,
+          "z": 80.5
+        }
+      },
+      {
+        "type": "gold",
+        "location": {
+          "x": -79.5,
+          "y": 92.0,
+          "z": 35.5
+        }
+      },
+      {
+        "type": "iron",
+        "location": {
+          "x": -79.5,
+          "y": 92.0,
+          "z": 35.5
+        }
+      }
+    ],
+    "holograms": [
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": -69.5,
+          "y": 92.0,
+          "z": 42.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": -77.5,
+          "y": 92.0,
+          "z": 42.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": -41.5,
+          "y": 92.0,
+          "z": 78.5,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": -41.5,
+          "y": 92.0,
+          "z": 70.5,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": 42.5,
+          "y": 92.0,
+          "z": 70.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": 42.5,
+          "y": 92.0,
+          "z": 78.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": -77.5,
+          "y": 92.0,
+          "z": -41.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": -69.5,
+          "y": 92.0,
+          "z": -41.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": -41.5,
+          "y": 92.0,
+          "z": -69.5,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": -41.5,
+          "y": 92.0,
+          "z": -77.5,
+          "yaw": 270.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": 42.5,
+          "y": 92.0,
+          "z": -77.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": 42.5,
+          "y": 92.0,
+          "z": -69.5,
+          "yaw": 90.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": 70.5,
+          "y": 92.0,
+          "z": -41.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": 78.5,
+          "y": 92.0,
+          "z": -41.5,
+          "yaw": 0.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "DEALER",
+        "location": {
+          "x": 78.5,
+          "y": 92.0,
+          "z": 42.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        }
+      },
+      {
+        "controller": "UPGRADE_DEALER",
+        "location": {
+          "x": 70.5,
+          "y": 92.0,
+          "z": 42.5,
+          "yaw": 180.0,
+          "pitch": 0.0
+        }
+      }
+    ]
+  }
+}
