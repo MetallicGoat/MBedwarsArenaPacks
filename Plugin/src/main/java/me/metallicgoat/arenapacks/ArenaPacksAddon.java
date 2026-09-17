@@ -7,6 +7,7 @@ import de.marcely.bedwars.api.command.CommandsCollection;
 import me.metallicgoat.arenapacks.command.ExportCommand;
 import me.metallicgoat.arenapacks.command.ImportCommand;
 import me.metallicgoat.arenapacks.command.InstallCommand;
+import me.metallicgoat.arenapacks.command.InstallMultipleCommand;
 import me.metallicgoat.arenapacks.command.ListCommand;
 import me.metallicgoat.arenapacks.util.Console;
 
@@ -39,6 +40,7 @@ public class ArenaPacksAddon extends BedwarsAddon {
     registerCommand("export", collection, new ExportCommand());
     registerCommand("import", collection, new ImportCommand());
     registerCommand("install", collection, new InstallCommand());
+    registerCommand("install-multiple", collection, new InstallMultipleCommand());
     registerCommand("list", collection, new ListCommand());
   }
 

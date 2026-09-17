@@ -62,4 +62,9 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <!-- Stable name: MBedwars' web setup downloads releases/latest/download/MBedwarsArenaPacks.jar -->
+    <finalName>MBedwarsArenaPacks</finalName>
+  </build>
 </project>

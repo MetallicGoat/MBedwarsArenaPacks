@@ -14,6 +14,7 @@ import me.metallicgoat.arenapacks.pack.PackMeta;
 import me.metallicgoat.arenapacks.pack.PackMetaCodec;
 import me.metallicgoat.arenapacks.remote.RemoteIndex;
 import me.metallicgoat.arenapacks.remote.RemoteIndexService;
+import me.metallicgoat.arenapacks.util.Console;
 import me.metallicgoat.arenapacks.util.WorldFiles;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -40,17 +41,17 @@ public class ListCommand implements CommandHandler {
       return;
     }
 
-    sender.sendMessage("§7Fetching pack index from " + MainConfig.repo_slug + "...");
+    Console.send(sender, "§7Fetching pack index from " + MainConfig.REPO_SLUG + "...");
 
     RemoteIndexService.fetchIndex(true, index -> {
       if (index.packs.isEmpty()) {
-        sender.sendMessage("§eThe repository contains no packs.");
+        Console.send(sender, "§eThe repository contains no packs.");
         return;
       }
 
       // Details live in each pack's own arena.json, so they are fetched per pack
       RemoteIndexService.fetchPackMetas(index.packs, metas -> {
-        sender.sendMessage("§6Available arena packs:");
+        Console.send(sender, "§6Available arena packs:");
 
         String shownCategory = null;
 
@@ -61,12 +62,12 @@ public class ListCommand implements CommandHandler {
 
           // Packs arrive in index order, so a header per run of a category groups them
           if (!category.isEmpty() && !category.equals(shownCategory))
-            sender.sendMessage("§6" + category + ":");
+            Console.send(sender, "§6" + category + ":");
 
           shownCategory = category;
 
           if (meta == null) {
-            sender.sendMessage("§7- §f" + RemoteIndex.directoryName(path) + " §c(details unavailable)");
+            Console.send(sender, "§7- §f" + RemoteIndex.directoryName(path) + " §c(details unavailable)");
             continue;
           }
 
@@ -80,24 +81,24 @@ public class ListCommand implements CommandHandler {
           if (installed)
             line.append(" §a(installed)");
 
-          sender.sendMessage(line.toString());
+          Console.send(sender, line.toString());
         }
 
-        sender.sendMessage("§7Install one with: /bw arenapacks install <name>");
+        Console.send(sender, "§7Install one with: /bw arenapacks install <world|region> <name>");
       });
-    }, error -> sender.sendMessage("§c" + error));
+    }, error -> Console.send(sender, "§c" + error));
   }
 
   private void listLocal(CommandSender sender) {
     boolean foundAny = false;
 
-    sender.sendMessage("§6Local arena packs:");
+    Console.send(sender, "§6Local arena packs:");
 
     for (File folder : ImportCommand.searchFolders()) {
       for (File pack : PackFinder.findAll(folder)) {
         final File worldZip = new File(pack, PackMetaCodec.WORLD_ZIP_NAME);
 
-        sender.sendMessage("§7- §f" + PackFinder.relativeName(folder, pack)
+        Console.send(sender, "§7- §f" + PackFinder.relativeName(folder, pack)
             + " §7(" + (worldZip.isFile() ? WorldFiles.formatSize(worldZip.length()) : "§cno " + PackMetaCodec.WORLD_ZIP_NAME + "§7")
             + ", " + folder.getName() + ")");
         foundAny = true;
@@ -105,7 +106,7 @@ public class ListCommand implements CommandHandler {
     }
 
     if (!foundAny)
-      sender.sendMessage("§7(none - export an arena or drop pack folders into plugins/MBedwarsArenaPacks/imports/)");
+      Console.send(sender, "§7(none - export an arena or drop pack folders into plugins/MBedwarsArenaPacks/imports/)");
   }
 
   @Override

@@ -9,6 +9,7 @@ import me.metallicgoat.arenapacks.ArenaPacksPlugin;
 import me.metallicgoat.arenapacks.pack.PackFinder;
 import me.metallicgoat.arenapacks.pack.PackImporter;
 import me.metallicgoat.arenapacks.pack.PackMetaCodec;
+import me.metallicgoat.arenapacks.util.Console;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -30,24 +31,24 @@ public class ImportCommand implements CommandHandler {
   @Override
   public void onFire(CommandSender sender, String label, String[] args) {
     if (args.length < 1 || args.length > 2) {
-      sender.sendMessage("§cUsage: /" + label + " <packFolder> [newArenaName]");
+      Console.send(sender, "§cUsage: /" + label + " <packFolder> [newArenaName]");
       return;
     }
 
     final List<File> matches = PackFinder.find(searchFolders(), args[0]);
 
     if (matches.isEmpty()) {
-      sender.sendMessage("§cCould not find a pack named '" + args[0] + "' in the imports, exports or downloads folder."
+      Console.send(sender, "§cCould not find a pack named '" + args[0] + "' in the imports, exports or downloads folder."
           + " A pack is a folder holding " + PackMetaCodec.META_FILE_NAME + " and " + PackMetaCodec.WORLD_ZIP_NAME
           + "; drop one into plugins/MBedwarsArenaPacks/imports/");
       return;
     }
 
     if (matches.size() > 1) {
-      sender.sendMessage("§c'" + args[0] + "' matches more than one pack. Import it by its full path:");
+      Console.send(sender, "§c'" + args[0] + "' matches more than one pack. Import it by its full path:");
 
       for (File match : matches)
-        sender.sendMessage("§7- §f" + describe(match));
+        Console.send(sender, "§7- §f" + describe(match));
 
       return;
     }

@@ -29,10 +29,10 @@ Packs/            the packs themselves, grouped by team count
 
 Category folders are named with a hyphen (`4-Teams`, not `4 Teams`) because pack paths go
 into a `raw.githubusercontent.com` URL verbatim. You still install a pack by its own name —
-`/bw arenapacks install aquarium` — so the category never has to be typed.
+`/bw arenapacks install region aquarium` — so the category never has to be typed.
 
 The shipped `config.yml` already points at this repo's `Packs/` folder, so a fresh install
-can `/bw arenapacks install aquarium` with no configuration.
+can `/bw arenapacks install region aquarium` with no configuration.
 
 ## Commands
 
@@ -42,10 +42,13 @@ All commands live under `/bw arenapacks`:
 |---|---|---|
 | `/bw arenapacks export <arena> [packVersion]` | `mbedwars.arenapacks.export` | Export an arena to `plugins/MBedwarsArenaPacks/exports/<N>-Teams/<arena>/` |
 | `/bw arenapacks import <packFolder> [newArenaName]` | `mbedwars.arenapacks.import` | Import a local pack by name or path (searched recursively in `imports/`, `exports/` and `cache/downloads/`) |
-| `/bw arenapacks install <packName> [newArenaName]` | `mbedwars.arenapacks.install` | Download a pack from the configured GitHub repo and import it |
+| `/bw arenapacks install <world\|region> <packName> [newArenaName]` | `mbedwars.arenapacks.install` | Download a pack from the configured GitHub repo and import it as a world or region arena |
+| `/bw arenapacks install-multiple <world\|region> <packName> [packName...]` | `mbedwars.arenapacks.install` | Install several packs from the repo one after another, skipping packs whose arena already exists |
 | `/bw arenapacks list [local]` | `mbedwars.arenapacks.list` | List packs available in the repo (or local pack folders) |
 
 Notes:
+- `install` and `install-multiple` always ask for the arena type. A **world** arena spans the
+  whole world, so the pack's region corners are ignored. `import` uses the type stored in the pack.
 - Exporting requires the arena to be **stopped**, and ships the arena's **entire world folder**
   — one world per map is assumed.
 - The **lobby location travels only if it sits inside the arena's own world**. MBedwars stores
@@ -166,7 +169,7 @@ the pack's own `arena.json`, so nothing is duplicated and version bumps happen i
 }
 ```
 
-A pack is installed by its directory name (`/bw arenapacks install amazonia`); the category is
+A pack is installed by its directory name (`/bw arenapacks install region amazonia`); the category is
 only needed if two packs share a name, and the plugin will say so and list the candidates.
 Grouping is optional — a flat list of pack directories still works.
 
@@ -178,7 +181,15 @@ Grouping is optional — a flat list of pack directories still works.
 3. Copy that `<N>-Teams/<arena>` folder into the repo's `Packs/` and commit it.
 4. Run `Packs/datafix.py` to tidy the exported coordinates (see below).
 5. Add the path (e.g. `4-Teams/amazonia`) to `Packs/index.json` if it is new.
-6. On any server: `/bw arenapacks install <name>`.
+6. On any server: `/bw arenapacks install <world|region> <name>`.
+
+## Releases and the MBedwars web setup
+
+MBedwars' web setup lets admins pick maps from `Packs/index.json`. It then downloads this addon from
+`https://github.com/MetallicGoat/MBedwarsArenaPacks/releases/latest/download/MBedwarsArenaPacks.jar`
+and runs `/bw arenapacks install-multiple <world|region> <paths...>` once the setup has finished. `mvn package` builds
+`Plugin/target/MBedwarsArenaPacks.jar` under exactly that name. Upload it as an asset of a new
+GitHub release whenever the addon changes.
 
 Tweaking a coordinate later means editing `arena.json` and committing that one file — the
 `world.zip` stays untouched.

@@ -3,6 +3,7 @@ package me.metallicgoat.arenapacks.pack;
 import de.marcely.bedwars.api.BedwarsAPI;
 import de.marcely.bedwars.api.GameAPI;
 import de.marcely.bedwars.api.arena.Arena;
+import de.marcely.bedwars.api.arena.ArenaBuilder;
 import de.marcely.bedwars.api.arena.ArenaStatus;
 import de.marcely.bedwars.api.arena.ArenaTimeType;
 import de.marcely.bedwars.api.arena.ArenaWeatherType;
@@ -15,9 +16,11 @@ import de.marcely.bedwars.api.world.hologram.HologramControllerType;
 import de.marcely.bedwars.api.world.hologram.HologramEntity;
 import java.io.File;
 import java.util.Map;
+import java.util.function.Consumer;
 import me.metallicgoat.arenapacks.ArenaPacksPlugin;
 import me.metallicgoat.arenapacks.config.MainConfig;
 import me.metallicgoat.arenapacks.util.Console;
+import me.metallicgoat.arenapacks.util.MinecraftVersions;
 import me.metallicgoat.arenapacks.util.WorldFiles;
 import me.metallicgoat.arenapacks.util.ZipUtil;
 import org.bukkit.Bukkit;
@@ -36,21 +39,39 @@ public class PackImporter {
    * The pack folder itself is only ever read, never modified.
    */
   public static void importPack(CommandSender sender, File packDir, @Nullable String overrideName) {
+    importPack(sender, packDir, overrideName, null, null);
+  }
+
+  /**
+   * Same as {@link #importPack(CommandSender, File, String)}, but reports the
+   * outcome to {@code onDone} on the main thread once the import has finished
+   * or failed - used to chain several imports behind the {@link OperationLock}.
+   * <p>
+   * {@code regenTypeOverride} replaces the pack's own regeneration type. As a
+   * {@link RegenerationType#WORLD} arena spans the whole world, the pack's
+   * region corners are ignored for it.
+   */
+  public static void importPack(CommandSender sender, File packDir, @Nullable String overrideName,
+                                @Nullable RegenerationType regenTypeOverride, @Nullable Consumer<Boolean> onDone) {
+    final Consumer<Boolean> done = onDone != null ? onDone : success -> { };
+
     if (!OperationLock.tryAcquire()) {
-      sender.sendMessage("§cAnother arena pack operation is already running. Try again in a moment.");
+      Console.send(sender, "§cAnother arena pack operation is already running. Try again in a moment.");
+      done.accept(false);
       return;
     }
 
     if (!packDir.isDirectory()) {
       OperationLock.release();
-      sender.sendMessage("§cPack folder not found: " + packDir.getPath());
+      Console.send(sender, "§cPack folder not found: " + packDir.getPath());
+      done.accept(false);
       return;
     }
 
     final ArenaPacksPlugin plugin = ArenaPacksPlugin.getInstance();
     final File worldZip = new File(packDir, PackMetaCodec.WORLD_ZIP_NAME);
 
-    sender.sendMessage("§7Reading " + packDir.getName() + "/" + PackMetaCodec.META_FILE_NAME + "...");
+    Console.send(sender, "§7Reading " + packDir.getName() + "/" + PackMetaCodec.META_FILE_NAME + "...");
 
     // Step 1 (async): read the metadata
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -62,22 +83,35 @@ public class PackImporter {
         if (!worldZip.isFile())
           throw new InvalidPackException("Pack is missing its " + PackMetaCodec.WORLD_ZIP_NAME);
       } catch (Exception e) {
-        fail(sender, "Invalid pack: " + e.getMessage(), e);
+        fail(sender, "Invalid pack: " + e.getMessage(), e, done);
         return;
       }
 
       // Step 2 (sync): validate names against live server state
       Bukkit.getScheduler().runTask(plugin, () -> {
+        // local packs skip PackInstaller, so they need the same checks before the world is touched
+        if (meta.mbedwarsApiVersion > BedwarsAPI.getAPIVersion()) {
+          fail(sender, "This pack was exported on a newer MBedwars version (API " + meta.mbedwarsApiVersion
+              + ", installed: " + BedwarsAPI.getAPIVersion() + ").", null, done);
+          return;
+        }
+
+        if (MinecraftVersions.isNewerThan(meta.minecraftVersion, MinecraftVersions.server())) {
+          fail(sender, "This pack's world was saved on Minecraft " + meta.minecraftVersion + ", but this server runs "
+              + MinecraftVersions.server() + ". Worlds can't be loaded on older versions.", null, done);
+          return;
+        }
+
         final String arenaName = overrideName != null ? overrideName : meta.arenaName;
 
         if (!GameAPI.get().isArenaNameValid(arenaName)) {
-          fail(sender, "'" + arenaName + "' is not a valid arena name.", null);
+          fail(sender, "'" + arenaName + "' is not a valid arena name.", null, done);
           return;
         }
 
         if (GameAPI.get().getArenaByExactName(arenaName) != null) {
           fail(sender, "An arena named '" + arenaName + "' already exists."
-              + " Import under a different name: /bw arenapacks import " + packDir.getName() + " <newName>", null);
+              + " Import under a different name: /bw arenapacks import " + packDir.getName() + " <newName>", null, done);
           return;
         }
 
@@ -85,11 +119,11 @@ public class PackImporter {
         final File worldTarget = new File(Bukkit.getWorldContainer(), worldName);
 
         if (Bukkit.getWorld(worldName) != null || worldTarget.exists()) {
-          fail(sender, "World '" + worldName + "' already exists. Remove it or import under a different arena name.", null);
+          fail(sender, "World '" + worldName + "' already exists. Remove it or import under a different arena name.", null, done);
           return;
         }
 
-        sender.sendMessage("§7Installing world '" + worldName + "'...");
+        Console.send(sender, "§7Installing world '" + worldName + "'...");
 
         // Step 3 (async): unpack the world straight into the server's world container
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -101,21 +135,24 @@ public class PackImporter {
             new File(worldTarget, "session.lock").delete();
           } catch (Exception e) {
             WorldFiles.deleteDirectory(worldTarget);
-            fail(sender, "Failed to install the world folder: " + e.getMessage(), e);
+            fail(sender, "Failed to install the world folder: " + e.getMessage(), e, done);
             return;
           }
 
           // Step 4 (sync): load world, build arena, apply metadata
           Bukkit.getScheduler().runTask(plugin, () ->
-              buildArena(sender, meta, arenaName, worldName, worldTarget));
+              buildArena(sender, meta, arenaName, worldName, worldTarget, regenTypeOverride, done));
         });
       });
     });
   }
 
   private static void buildArena(CommandSender sender, PackMeta meta, String arenaName,
-                                 String worldName, File worldTarget) {
+                                 String worldName, File worldTarget, @Nullable RegenerationType regenTypeOverride,
+                                 Consumer<Boolean> done) {
     World world = null;
+    final Arena arena;
+    final RegenerationType regenType;
 
     try {
       world = new WorldCreator(worldName).createWorld();
@@ -125,17 +162,23 @@ public class PackImporter {
 
       world.setAutoSave(true);
 
-      final RegenerationType regenType = resolveRegenType(sender, meta.regenTypeId);
-      final Arena arena;
+      regenType = regenTypeOverride != null
+          ? regenTypeOverride
+          : resolveRegenType(sender, meta.regenTypeId);
 
       try {
-        arena = GameAPI.get().createArena()
+        final ArenaBuilder builder = GameAPI.get().createArena()
             .setName(arenaName)
             .setWorld(world)
-            .setLocation1(meta.regionMin)
-            .setLocation2(meta.regionMax)
-            .setRegenerationType(regenType)
-            .finish();
+            .setRegenerationType(regenType);
+
+        // a world arena covers the whole world, so the pack's region corners don't apply
+        if (regenType != RegenerationType.WORLD) {
+          builder.setLocation1(meta.regionMin)
+              .setLocation2(meta.regionMax);
+        }
+
+        arena = builder.finish();
       } catch (ArenaBuildException e) {
         throw new IllegalStateException("Failed to create the arena: " + e.getMessage(), e);
       }
@@ -144,26 +187,7 @@ public class PackImporter {
       spawnHolograms(sender, world, meta);
 
       arena.setStatus(ArenaStatus.STOPPED);
-
-      if (regenType == RegenerationType.REGION || regenType == RegenerationType.VOTING) {
-        sender.sendMessage("§7Saving regeneration snapshot...");
-
-        arena.runRegenerationBlocksSavingProcess(success -> {
-          if (Boolean.TRUE.equals(success))
-            sender.sendMessage("§aRegeneration snapshot saved.");
-          else
-            sender.sendMessage("§cSaving the regeneration snapshot failed! Run '/bw arena regenblocks " + arenaName + "' manually.");
-        });
-      }
-
       arena.saveNow();
-
-      OperationLock.release();
-
-      sender.sendMessage("§aImported arena '" + arenaName + "' (world: " + worldName + ").");
-
-      if (meta.lobby == null)
-        sender.sendMessage("§eThis pack has no lobby location - set one with '/bw arena set lobby " + arenaName + "' before enabling the arena.");
     } catch (Exception e) {
       // Fatal failure: undo the world install so the import leaves no traces
       if (world != null)
@@ -176,8 +200,45 @@ public class PackImporter {
       if (halfBuilt != null)
         halfBuilt.remove();
 
-      fail(sender, "Import failed: " + e.getMessage(), e);
+      fail(sender, "Import failed: " + e.getMessage(), e, done);
+      return;
     }
+
+    // Outside the try: nothing past this point may roll back the created arena
+    final Runnable finish = () -> {
+      OperationLock.release();
+
+      Console.send(sender, "§aImported arena '" + arenaName + "' (world: " + worldName + ").");
+
+      if (meta.lobby == null)
+        Console.send(sender, "§eThis pack has no lobby location - set one with '/bw arena set lobby " + arenaName + "' before enabling the arena.");
+
+      done.accept(true);
+    };
+
+    if (regenType != RegenerationType.REGION && regenType != RegenerationType.VOTING) {
+      finish.run();
+      return;
+    }
+
+    // The import only counts as done once the snapshot is saved: this keeps the lock held
+    // (so batch installs don't start the next map meanwhile) and the "Imported" message honest
+    Console.send(sender, "§7Saving regeneration snapshot for '" + arenaName + "', this may take a moment...");
+
+    arena.runRegenerationBlocksSavingProcess(success -> {
+      final Runnable onSaved = () -> {
+        if (!Boolean.TRUE.equals(success))
+          Console.send(sender, "§cSaving the regeneration snapshot failed! Run '/bw arena regenblocks " + arenaName + "' manually.");
+
+        finish.run();
+      };
+
+      // the callback may be called from another thread
+      if (Bukkit.isPrimaryThread())
+        onSaved.run();
+      else
+        Bukkit.getScheduler().runTask(ArenaPacksPlugin.getInstance(), onSaved);
+    });
   }
 
   /** Applies all optional metadata. Per-item problems warn and continue. */
@@ -287,11 +348,13 @@ public class PackImporter {
   }
 
   private static void warn(CommandSender sender, String message) {
-    sender.sendMessage("§e" + message);
-    Console.printWarn(message);
+    Console.send(sender, "§e" + message);
+
+    if (!Console.isConsole(sender))
+      Console.printWarn(message);
   }
 
-  private static void fail(CommandSender sender, String message, @Nullable Throwable cause) {
+  private static void fail(CommandSender sender, String message, @Nullable Throwable cause, Consumer<Boolean> done) {
     OperationLock.release();
 
     if (cause != null) {
@@ -299,11 +362,17 @@ public class PackImporter {
       cause.printStackTrace();
     }
 
-    if (Bukkit.isPrimaryThread()) {
-      sender.sendMessage("§c" + message);
-    } else {
-      Bukkit.getScheduler().runTask(ArenaPacksPlugin.getInstance(),
-          () -> sender.sendMessage("§c" + message));
-    }
+    // the console already got the message as an error above
+    final Runnable report = () -> {
+      if (cause == null || !Console.isConsole(sender))
+        Console.send(sender, "§c" + message);
+
+      done.accept(false);
+    };
+
+    if (Bukkit.isPrimaryThread())
+      report.run();
+    else
+      Bukkit.getScheduler().runTask(ArenaPacksPlugin.getInstance(), report);
   }
 }

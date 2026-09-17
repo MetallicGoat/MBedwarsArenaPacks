@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import me.metallicgoat.arenapacks.ArenaPacksPlugin;
 import me.metallicgoat.arenapacks.pack.PackExporter;
+import me.metallicgoat.arenapacks.util.Console;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
@@ -29,14 +30,14 @@ public class ExportCommand implements CommandHandler {
   @Override
   public void onFire(CommandSender sender, String label, String[] args) {
     if (args.length < 1 || args.length > 2) {
-      sender.sendMessage("§cUsage: /" + label + " <arena> [packVersion]");
+      Console.send(sender, "§cUsage: /" + label + " <arena> [packVersion]");
       return;
     }
 
     final Arena arena = GameAPI.get().getArenaByName(args[0]);
 
     if (arena == null) {
-      sender.sendMessage("§cUnknown arena: " + args[0]);
+      Console.send(sender, "§cUnknown arena: " + args[0]);
       return;
     }
 
@@ -46,7 +47,7 @@ public class ExportCommand implements CommandHandler {
       try {
         packVersion = Integer.parseInt(args[1]);
       } catch (NumberFormatException e) {
-        sender.sendMessage("§cThe pack version must be a number, got: " + args[1]);
+        Console.send(sender, "§cThe pack version must be a number, got: " + args[1]);
         return;
       }
     }

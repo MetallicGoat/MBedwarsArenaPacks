@@ -46,7 +46,7 @@ public class RemoteIndexService {
       return;
     }
 
-    final String url = rawUrl(MainConfig.repo_index_path);
+    final String url = rawUrl(MainConfig.REPO_INDEX_BRANCH);
 
     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
       try {
@@ -231,7 +231,7 @@ public class RemoteIndexService {
    * pack collection stays self-contained no matter where it sits in the repo.
    */
   private static String packFileUrl(String path, String fileName) {
-    final String indexPath = MainConfig.repo_index_path;
+    final String indexPath = MainConfig.REPO_INDEX_BRANCH;
     final int slash = indexPath.lastIndexOf('/');
     final String base = slash == -1 ? "" : indexPath.substring(0, slash + 1);
 
@@ -259,7 +259,7 @@ public class RemoteIndexService {
   private static String rawUrl(String path) {
     final String cleanedPath = path.startsWith("/") ? path.substring(1) : path;
 
-    return "https://raw.githubusercontent.com/" + MainConfig.repo_slug + "/" + MainConfig.repo_branch + "/" + cleanedPath;
+    return "https://raw.githubusercontent.com/" + MainConfig.REPO_SLUG + "/" + MainConfig.REPO_BRANCH + "/" + cleanedPath;
   }
 
   private static HttpURLConnection openConnection(String url) throws IOException {

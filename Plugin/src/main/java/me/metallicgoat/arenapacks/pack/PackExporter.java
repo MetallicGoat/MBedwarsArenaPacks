@@ -37,7 +37,7 @@ public class PackExporter {
    */
   public static void export(CommandSender sender, Arena arena, int packVersion) {
     if (!OperationLock.tryAcquire()) {
-      sender.sendMessage("§cAnother arena pack operation is already running. Try again in a moment.");
+      Console.send(sender, "§cAnother arena pack operation is already running. Try again in a moment.");
       return;
     }
 
@@ -45,28 +45,28 @@ public class PackExporter {
 
     try {
       if (arena.getStatus() != ArenaStatus.STOPPED) {
-        sender.sendMessage("§cThe arena must be stopped before it can be exported (current status: " + arena.getStatus() + ").");
+        Console.send(sender, "§cThe arena must be stopped before it can be exported (current status: " + arena.getStatus() + ").");
         return;
       }
 
       final World world = arena.getGameWorld();
 
       if (world == null) {
-        sender.sendMessage("§cThe arena's world '" + arena.getGameWorldName() + "' is not loaded.");
+        Console.send(sender, "§cThe arena's world '" + arena.getGameWorldName() + "' is not loaded.");
         return;
       }
 
       if (arena.getMinRegionCorner() == null || arena.getMaxRegionCorner() == null) {
-        sender.sendMessage("§cThe arena has no region corners set. Set them first with the MBedwars setup tools.");
+        Console.send(sender, "§cThe arena has no region corners set. Set them first with the MBedwars setup tools.");
         return;
       }
 
       if (!world.getPlayers().isEmpty())
-        sender.sendMessage("§eWarning: there are players inside the arena world. Their changes may end up in the pack.");
+        Console.send(sender, "§eWarning: there are players inside the arena world. Their changes may end up in the pack.");
 
       for (Arena other : GameAPI.get().getArenas()) {
         if (other != arena && arena.getGameWorldName().equals(other.getGameWorldName())) {
-          sender.sendMessage("§eWarning: arena '" + other.getName() + "' shares this world. Its map will be included in the pack.");
+          Console.send(sender, "§eWarning: arena '" + other.getName() + "' shares this world. Its map will be included in the pack.");
           break;
         }
       }
@@ -78,7 +78,7 @@ public class PackExporter {
       final File zipFile = new File(packDir, PackMetaCodec.WORLD_ZIP_NAME);
       final File metaFile = new File(packDir, PackMetaCodec.META_FILE_NAME);
 
-      sender.sendMessage("§7Exporting arena '" + meta.arenaName + "'...");
+      Console.send(sender, "§7Exporting arena '" + meta.arenaName + "'...");
 
       // Flush the world and keep it stable while the folder is zipped
       world.save();
@@ -124,9 +124,10 @@ public class PackExporter {
           if (finalFailure != null) {
             Console.printError("Failed to export arena '" + meta.arenaName + "'", finalFailure.toString());
             finalFailure.printStackTrace();
-            sender.sendMessage("§cExport failed: " + finalFailure.getMessage() + " (see console)");
+            if (!Console.isConsole(sender))
+              Console.send(sender, "§cExport failed: " + finalFailure.getMessage() + " (see console)");
           } else {
-            sender.sendMessage("§aExported arena '" + meta.arenaName + "' to " + packDir.getPath()
+            Console.send(sender, "§aExported arena '" + meta.arenaName + "' to " + packDir.getPath()
                 + " (world.zip: " + WorldFiles.formatSize(zipFile.length()) + ")");
           }
         });
